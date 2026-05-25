@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>生物医药职业决策测评 V6 | BioCareer Compass</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root{--primary:#0ea5e9;--primary-dark:#0284c7;--primary-light:#38bdf8;--secondary:#10b981;--accent:#f59e0b;--bg:#f8fafc;--card:#fff;--text:#0f172a;--text-secondary:#475569;--text-light:#94a3b8;--border:#e2e8f0;--shadow:0 4px 6px -1px rgba(0,0,0,.1);--shadow-lg:0 10px 15px -3px rgba(0,0,0,.1);--gradient-primary:linear-gradient(135deg,#0ea5e9,#0284c7);--gradient-secondary:linear-gradient(135deg,#10b981,#059669);--gradient-bg:linear-gradient(135deg,#f0f9ff,#e0f2fe 50%,#f0fdfa)}
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Noto Sans SC',sans-serif;background:var(--gradient-bg);color:var(--text);line-height:1.6;min-height:100vh;overflow-x:hidden}
+        .bg-animation{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1}
+        .bg-animation::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle at 20% 80%,rgba(14,165,233,.08) 0%,transparent 50%),radial-gradient(circle at 80% 20%,rgba(16,185,129,.08) 0%,transparent 50%);animation:bgFloat 20s ease-in-out infinite}
+        @keyframes bgFloat{0%,100%{transform:translate(0,0)}33%{transform:translate(30px,-30px)}66%{transform:translate(-20px,20px)}}
+        .container{max-width:900px;margin:0 auto;padding:20px;position:relative;z-index:1}
+        .header{text-align:center;padding:50px 30px;background:var(--gradient-primary);color:#fff;border-radius:24px;margin-bottom:30px;box-shadow:0 20px 25px -5px rgba(0,0,0,.1);position:relative;overflow:hidden}
+        .header::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 20% 50%,rgba(255,255,255,.1) 0%,transparent 50%);animation:headerShine 8s ease-in-out infinite}
+        @keyframes headerShine{0%,100%{opacity:.5}50%{opacity:1}}
+        .header-content{position:relative;z-index:1}
+        .header-icon{font-size:3.5rem;margin-bottom:15px;animation:float 3s ease-in-out infinite;display:inline-block}
+        @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+        .header h1{font-size:2.2rem;font-weight:700;margin-bottom:12px;text-shadow:0 2px 4px rgba(0,0,0,.1)}
+        .header p{font-size:1.1rem;opacity:.95;max-width:600px;margin:0 auto;font-weight:300}
+        .header-badges{display:flex;justify-content:center;gap:15px;margin-top:20px;flex-wrap:wrap}
+        .header-badge{background:rgba(255,255,255,.2);padding:8px 16px;border-radius:20px;font-size:.85rem;backdrop-filter:blur(10px)}
+        .progress-container{background:var(--card);padding:25px;border-radius:20px;margin-bottom:25px;box-shadow:var(--shadow);border:1px solid var(--border)}
+        .progress-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
+        .progress-title{font-weight:600;color:var(--text);display:flex;align-items:center;gap:8px}
+        .progress-percentage{font-size:1.5rem;font-weight:700;color:var(--primary)}
+        .progress-bar{height:10px;background:var(--border);border-radius:5px;overflow:hidden;position:relative}
+        .progress-fill{height:100%;background:var(--gradient-primary);border-radius:5px;transition:width .3s cubic-bezier(.4,0,.2,1)}
+        .progress-steps{display:flex;justify-content:space-between;margin-top:12px;padding:0 5px;flex-wrap:wrap;gap:4px}
+        .progress-step{width:8px;height:8px;border-radius:50%;background:var(--border);transition:all .3s ease;flex-shrink:0}
+        .progress-step.active{background:var(--primary);transform:scale(1.3);box-shadow:0 0 0 3px rgba(14,165,233,.2)}
+        .progress-step.completed{background:var(--secondary)}
+        .progress-step.current{background:var(--accent);transform:scale(1.2)}
+        .welcome-screen{background:var(--card);padding:45px;border-radius:24px;box-shadow:var(--shadow-lg);border:1px solid var(--border);text-align:center;animation:fadeInUp .6s ease}
+        @keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+        .welcome-badge{display:inline-block;background:var(--gradient-primary);color:#fff;padding:8px 20px;border-radius:20px;font-size:.9rem;font-weight:500;margin-bottom:25px}
+        .welcome-screen h2{font-size:1.8rem;margin-bottom:15px;color:var(--text);font-weight:700}
+        .welcome-screen .subtitle{color:var(--text-secondary);font-size:1.1rem;margin-bottom:35px;line-height:1.8}
+        .feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin:35px 0}
+        .feature-card{padding:25px 20px;background:linear-gradient(135deg,#f8fafc,#f1f5f9);border-radius:16px;border:2px solid transparent;transition:all .3s ease;cursor:pointer}
+        .feature-card:hover{border-color:var(--primary-light);transform:translateY(-5px);box-shadow:var(--shadow-lg);background:#fff}
+        .feature-icon{width:60px;height:60px;background:var(--gradient-primary);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.8rem;margin:0 auto 15px;color:#fff;box-shadow:0 4px 15px rgba(14,165,233,.3)}
+        .feature-card:nth-child(2) .feature-icon{background:var(--gradient-secondary);box-shadow:0 4px 15px rgba(16,185,129,.3)}
+        .feature-card:nth-child(3) .feature-icon{background:linear-gradient(135deg,#f59e0b,#d97706);box-shadow:0 4px 15px rgba(245,158,11,.3)}
+        .feature-card h3{font-size:1.1rem;margin-bottom:10px;color:var(--text);font-weight:600}
+        .feature-card p{font-size:.9rem;color:var(--text-secondary);margin:0;line-height:1.6}
+        .stats-bar{display:flex;justify-content:center;gap:40px;margin:30px 0;padding:20px;background:var(--bg);border-radius:12px;flex-wrap:wrap}
+        .stat-item{text-align:center}
+        .stat-number{font-size:2rem;font-weight:700;color:var(--primary);display:block}
+        .stat-label{font-size:.85rem;color:var(--text-light);margin-top:5px}
+        .btn{padding:16px 32px;border:none;border-radius:12px;font-size:1rem;font-weight:600;cursor:pointer;transition:all .3s ease;display:inline-flex;align-items:center;justify-content:center;gap:10px}
+        .btn-primary{background:var(--gradient-primary);color:#fff;box-shadow:0 4px 15px rgba(14,165,233,.4)}
+        .btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(14,165,233,.5)}
+        .btn-secondary{background:#fff;color:var(--text);border:2px solid var(--border)}
+        .btn-secondary:hover{border-color:var(--primary);color:var(--primary);background:#f0f9ff}
+        .btn-large{padding:18px 40px;font-size:1.1rem;border-radius:14px}
+        .btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important}
+        .question-card{background:var(--card);padding:35px;border-radius:24px;box-shadow:var(--shadow-lg);border:1px solid var(--border);margin-bottom:20px;display:none;position:relative;overflow:hidden}
+        .question-card.active{display:block;animation:slideIn .4s cubic-bezier(.4,0,.2,1)}
+        .question-card.sliding{animation:slideOut .3s cubic-bezier(.4,0,.2,1) forwards}
+        @keyframes slideIn{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+        @keyframes slideOut{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(-30px)}}
+        .question-header{display:flex;align-items:center;gap:15px;margin-bottom:25px;flex-wrap:wrap}
+        .question-number{background:var(--gradient-primary);color:#fff;padding:10px 18px;border-radius:12px;font-size:.9rem;font-weight:600}
+        .dimension-tag{background:#f0f9ff;color:var(--primary);padding:6px 14px;border-radius:20px;font-size:.8rem;font-weight:500}
+        .axis-tag{background:linear-gradient(135deg,#fef3c7,#fde68a);color:#92400e;padding:6px 14px;border-radius:20px;font-size:.8rem;font-weight:500}
+        .question-type-tag{background:linear-gradient(135deg,#e0e7ff,#c7d2fe);color:#3730a3;padding:6px 14px;border-radius:20px;font-size:.8rem;font-weight:500}
+        .question-type-tag.frequency{background:linear-gradient(135deg,#dbeafe,#bfdbfe);color:#1e40af}
+        .question-text{font-size:1.25rem;font-weight:600;margin-bottom:20px;line-height:1.7;color:var(--text)}
+        .scenario-box{background:linear-gradient(135deg,#f0f9ff,#e0f2fe);border-left:4px solid var(--primary);padding:25px;border-radius:16px;margin-bottom:30px;position:relative}
+        .scenario-box::before{content:'\1f4ad';position:absolute;top:-10px;left:20px;background:#fff;padding:5px 10px;border-radius:20px;font-size:1.2rem}
+        .scenario-box p{color:var(--text-secondary);font-style:italic;line-height:1.8;margin-top:10px}
+        .options-container{display:flex;flex-direction:column;gap:14px}
+        .option-btn{padding:20px 24px;background:var(--bg);border:2px solid var(--border);border-radius:16px;cursor:pointer;text-align:left;font-size:1rem;color:var(--text);transition:all .25s ease;display:flex;align-items:flex-start;gap:15px}
+        .option-btn:hover{border-color:var(--primary-light);background:#f0f9ff;transform:translateY(-2px);box-shadow:0 4px 12px rgba(14,165,233,.15)}
+        .option-btn.selected{border-color:var(--primary);background:linear-gradient(135deg,#eff6ff,#dbeafe);box-shadow:0 0 0 4px rgba(14,165,233,.15);animation:selectPulse .3s ease}
+        @keyframes selectPulse{0%{transform:scale(1)}50%{transform:scale(1.02)}100%{transform:scale(1)}}
+        .option-number{width:36px;height:36px;background:var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1rem;flex-shrink:0;transition:all .2s ease}
+        .option-btn:hover .option-number{background:var(--primary-light);color:#fff}
+        .option-btn.selected .option-number{background:var(--primary);color:#fff;transform:scale(1.1)}
+        .option-text{flex:1;line-height:1.6;padding-top:5px}
+        .nav-buttons{display:flex;gap:15px;margin-top:30px}
+        .nav-buttons .btn{flex:1}
+        .keyboard-hint{text-align:center;margin-top:15px;color:var(--text-light);font-size:.85rem}
+        .keyboard-hint kbd{background:var(--bg);padding:4px 8px;border-radius:4px;border:1px solid var(--border);font-family:monospace}
+        .loading-screen{display:none;text-align:center;padding:80px 40px;background:var(--card);border-radius:24px;box-shadow:var(--shadow-lg)}
+        .loading-screen.active{display:block;animation:fadeIn .5s ease}
+        @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+        .loading-animation{position:relative;width:120px;height:120px;margin:0 auto 30px}
+        .loading-ring{position:absolute;border:4px solid transparent;border-top-color:var(--primary);border-radius:50%;animation:spin 1s linear infinite}
+        .loading-ring:nth-child(1){width:120px;height:120px;top:0;left:0;animation-duration:1.5s}
+        .loading-ring:nth-child(2){width:90px;height:90px;top:15px;left:15px;border-top-color:var(--secondary);animation-duration:1.2s;animation-direction:reverse}
+        .loading-ring:nth-child(3){width:60px;height:60px;top:30px;left:30px;border-top-color:var(--accent);animation-duration:.9s}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        .loading-text{font-size:1.3rem;color:var(--text);font-weight:600;margin-bottom:10px}
+        .loading-subtext{color:var(--text-light);font-size:.95rem}
+        .loading-dots::after{content:'';animation:dots 1.5s steps(4,end) infinite}
+        @keyframes dots{0%{content:''}25%{content:'.'}50%{content:'..'}75%{content:'...'}100%{content:''}}
+        .results-screen{display:none;animation:fadeInUp .6s ease}
+        .results-screen.active{display:block}
+        .result-hero{background:var(--card);padding:50px 40px;border-radius:24px;box-shadow:var(--shadow-lg);border:1px solid var(--border);text-align:center;margin-bottom:25px;position:relative;overflow:hidden}
+        .result-hero::before{content:'';position:absolute;top:0;left:0;right:0;height:5px;background:var(--gradient-primary)}
+        .result-badge{display:inline-block;background:var(--gradient-primary);color:#fff;padding:15px 35px;border-radius:30px;font-size:2rem;font-weight:700;margin-bottom:25px;box-shadow:0 10px 30px rgba(14,165,233,.3);letter-spacing:3px}
+        .result-title{font-size:1.6rem;color:var(--text);margin-bottom:20px;font-weight:700}
+        .result-description{color:var(--text-secondary);max-width:650px;margin:0 auto;line-height:1.9;font-size:1.05rem}
+        .dimensions-section,.careers-section,.action-section{background:var(--card);padding:35px;border-radius:24px;box-shadow:var(--shadow);border:1px solid var(--border);margin-bottom:25px}
+        .section-header{display:flex;align-items:center;gap:12px;margin-bottom:30px}
+        .section-icon{width:45px;height:45px;background:var(--gradient-primary);border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.3rem}
+        .section-title{font-size:1.3rem;font-weight:700;color:var(--text)}
+        .dimension-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+        .dimension-card{background:var(--bg);padding:25px;border-radius:16px;border:2px solid transparent;transition:all .3s ease;opacity:0;animation:fadeInUp .5s ease forwards}
+        .dimension-card:hover{border-color:var(--border);transform:translateY(-3px);box-shadow:var(--shadow)}
+        .dimension-card.primary{background:linear-gradient(135deg,#eff6ff,#dbeafe);border-color:var(--primary)}
+        .dimension-card.secondary{background:linear-gradient(135deg,#f0fdf4,#dcfce7);border-color:var(--secondary)}
+        .dimension-card:nth-child(1){animation-delay:.1s}.dimension-card:nth-child(2){animation-delay:.2s}.dimension-card:nth-child(3){animation-delay:.3s}.dimension-card:nth-child(4){animation-delay:.4s}.dimension-card:nth-child(5){animation-delay:.5s}.dimension-card:nth-child(6){animation-delay:.6s}
+        .dimension-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
+        .dimension-name{font-weight:600;color:var(--text);display:flex;align-items:center;gap:8px}
+        .dimension-code{background:#fff;padding:4px 10px;border-radius:20px;font-size:.8rem;font-weight:700;color:var(--primary)}
+        .dimension-score{font-size:1.5rem;font-weight:700;color:var(--primary)}
+        .dimension-bar{height:10px;background:var(--border);border-radius:5px;overflow:hidden;margin-bottom:10px}
+        .dimension-fill{height:100%;border-radius:5px;transition:width 1s cubic-bezier(.4,0,.2,1)}
+        .dimension-fill.high{background:var(--gradient-secondary)}
+        .dimension-fill.medium{background:linear-gradient(135deg,#f59e0b,#d97706)}
+        .dimension-fill.low{background:linear-gradient(90deg,var(--text-light),#cbd5e1)}
+        .dimension-desc{font-size:.9rem;color:var(--text-secondary);line-height:1.6}
+        /* 独立轴样式 */
+        .axis-section{background:var(--card);padding:35px;border-radius:24px;box-shadow:var(--shadow);border:1px solid var(--border);margin-bottom:25px}
+        .axis-container{display:flex;flex-direction:column;gap:30px}
+        .axis-item{padding:20px;background:var(--bg);border-radius:16px}
+        .axis-labels{display:flex;justify-content:space-between;margin-bottom:15px;font-weight:600}
+        .axis-label-left{color:var(--primary)}
+        .axis-label-right{color:var(--secondary)}
+        .axis-bar{height:12px;background:linear-gradient(90deg,var(--primary),var(--secondary));border-radius:6px;position:relative}
+        .axis-marker{position:absolute;top:-8px;width:24px;height:28px;background:#fff;border:3px solid var(--text);border-radius:6px;transform:translateX(-50%);box-shadow:0 2px 8px rgba(0,0,0,.2);transition:left .8s cubic-bezier(.4,0,.2,1)}
+        .axis-score{text-align:center;margin-top:15px;font-size:.9rem;color:var(--text-secondary)}
+        .career-cards{display:flex;flex-direction:column;gap:20px}
+        .career-card{background:var(--bg);border-radius:20px;padding:30px;border:2px solid transparent;transition:all .3s ease;position:relative;overflow:hidden;opacity:0;animation:fadeInUp .5s ease forwards}
+        .career-card:nth-child(1){animation-delay:.2s}.career-card:nth-child(2){animation-delay:.35s}.career-card:nth-child(3){animation-delay:.5s}
+        .career-card::before{content:'';position:absolute;top:0;left:0;width:5px;height:100%;background:var(--gradient-primary);opacity:0;transition:opacity .3s ease}
+        .career-card:hover{border-color:var(--primary-light);transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+        .career-card:hover::before{opacity:1}
+        .career-card.best-match{background:linear-gradient(135deg,#eff6ff,#dbeafe);border-color:var(--primary)}
+        .career-card.best-match::before{opacity:1}
+        .career-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px}
+        .career-match-badge{background:var(--gradient-secondary);color:#fff;padding:8px 16px;border-radius:20px;font-size:.9rem;font-weight:700}
+        .career-match-badge.medium{background:linear-gradient(135deg,#f59e0b,#d97706)}
+        .career-rank{width:36px;height:36px;background:var(--primary);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1rem}
+        .career-name{font-size:1.3rem;font-weight:700;color:var(--text);margin-bottom:12px}
+        .career-tags{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px}
+        .career-tag{background:#fff;padding:6px 14px;border-radius:20px;font-size:.85rem;color:var(--text-secondary);border:1px solid var(--border)}
+        .career-description{color:var(--text-secondary);line-height:1.8;font-size:.95rem}
+        .career-details{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-top:20px;padding-top:20px;border-top:1px solid var(--border)}
+        .career-detail{text-align:center}
+        .career-detail-value{font-size:1.1rem;font-weight:700;color:var(--primary);display:block}
+        .career-detail-label{font-size:.8rem;color:var(--text-light);margin-top:4px}
+        .action-section{text-align:center}
+        .action-buttons{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
+        .action-btn{padding:18px 24px;border-radius:14px;border:2px solid var(--border);background:#fff;cursor:pointer;transition:all .3s ease;display:flex;flex-direction:column;align-items:center;gap:10px}
+        .action-btn:hover{border-color:var(--primary);background:#f0f9ff;transform:translateY(-3px);box-shadow:var(--shadow)}
+        .action-btn i{font-size:1.5rem;color:var(--primary)}
+        .action-btn span{font-weight:600;color:var(--text)}
+        .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--text);color:#fff;padding:16px 32px;border-radius:12px;font-weight:500;box-shadow:0 20px 25px -5px rgba(0,0,0,.1);z-index:10000;opacity:0;transition:all .3s ease}
+        .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+        .confetti{position:fixed;width:10px;height:10px;top:-10px;animation:confetti-fall 3s ease-out forwards;z-index:9999}
+        @keyframes confetti-fall{0%{transform:translateY(0) rotate(0);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+        .save-status{display:inline-flex;align-items:center;gap:6px;font-size:.85rem;color:var(--text-light);margin-top:15px}
+        .save-status.saved{color:var(--secondary)}
+        @media(max-width:375px){
+            .container{padding:10px}
+            .header{padding:30px 15px;border-radius:16px}
+            .header h1{font-size:1.4rem}
+            .header-icon{font-size:2.5rem}
+            .header-badges{gap:8px}
+            .header-badge{padding:6px 10px;font-size:.75rem}
+            .progress-container{padding:15px;border-radius:16px}
+            .progress-percentage{font-size:1.2rem}
+            .welcome-screen,.question-card{padding:20px 15px;border-radius:16px}
+            .welcome-screen h2{font-size:1.3rem}
+            .welcome-screen .subtitle{font-size:1rem}
+            .feature-grid{gap:12px}
+            .feature-card{padding:15px}
+            .stats-bar{gap:15px;padding:12px}
+            .stat-number{font-size:1.4rem}
+            .question-text{font-size:1rem;line-height:1.6}
+            .scenario-box{padding:15px;margin-bottom:20px}
+            .option-btn{padding:14px 12px;gap:10px;border-radius:12px}
+            .option-number{width:28px;height:28px;font-size:.85rem}
+            .option-text{font-size:.9rem;line-height:1.5}
+            .nav-buttons{flex-direction:column-reverse;gap:10px}
+            .nav-buttons .btn{width:100%}
+            .result-hero{padding:30px 15px;border-radius:16px}
+            .result-badge{font-size:1.3rem;padding:10px 20px}
+            .result-title{font-size:1.2rem}
+            .dimensions-section,.careers-section,.action-section,.axis-section{padding:20px 15px;border-radius:16px}
+            .dimension-cards{grid-template-columns:1fr;gap:12px}
+            .career-details{grid-template-columns:1fr}
+            .action-buttons{grid-template-columns:1fr}
+            .career-card{padding:20px 15px}
+            .career-name{font-size:1.1rem}
+        }
+        @media(max-width:768px){
+            .feature-grid{grid-template-columns:1fr}
+            .stats-bar{gap:20px}
+        }
+        @media print{
+            .bg-animation,.header,.progress-container,.action-section,.nav-buttons,.keyboard-hint{display:none!important}
+            .results-screen{display:block!important}
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    <div class="container">
+        <div class="header"><div class="header-content">
+            <div class="header-icon">🧬</div>
+            <h1>生物医药职业决策测评</h1>
+            <p>基于科学的职业兴趣评估，帮助你发现适合的生物医药职业方向</p>
+            <div class="header-badges">
+                <span class="header-badge"><i class="fas fa-flask"></i> 科学严谨</span>
+                <span class="header-badge"><i class="fas fa-chart-line"></i> 8维评估</span>
+                <span class="header-badge"><i class="fas fa-bullseye"></i> 精准匹配</span>
+            </div>
+        </div></div>
+        <div class="progress-container" id="progressContainer" style="display:none">
+            <div class="progress-header">
+                <span class="progress-title"><i class="fas fa-tasks"></i> 测评进度</span>
+                <span class="progress-percentage" id="progressPercentage">0%</span>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+            <div class="progress-steps" id="progressSteps"></div>
+        </div>
+        <div class="welcome-screen" id="welcomeScreen">
+            <span class="welcome-badge">🎯 发现你的职业DNA</span>
+            <h2>探索最适合你的生物医药职业</h2>
+            <p class="subtitle">本测评基于Holland职业兴趣理论和生物医药行业特点，从6个主维度+2个独立轴评估你的职业倾向。</p>
+            <div class="feature-grid">
+                <div class="feature-card"><div class="feature-icon"><i class="fas fa-flask"></i></div><h3>科学严谨</h3><p>基于RIASEC职业兴趣理论，59题题库分层抽取20题</p></div>
+                <div class="feature-card"><div class="feature-icon"><i class="fas fa-chart-line"></i></div><h3>8维评估</h3><p>6主维度+2独立轴，全面评估职业倾向</p></div>
+                <div class="feature-card"><div class="feature-icon"><i class="fas fa-bullseye"></i></div><h3>情景模拟</h3><p>真实工作场景测试，了解真实职业偏好</p></div>
+            </div>
+            <div class="stats-bar">
+                <div class="stat-item"><span class="stat-number">20</span><span class="stat-label">测评题目</span></div>
+                <div class="stat-item"><span class="stat-number">8</span><span class="stat-label">评估维度</span></div>
+                <div class="stat-item"><span class="stat-number">30+</span><span class="stat-label">匹配职业</span></div>
+                <div class="stat-item"><span class="stat-number">5-8</span><span class="stat-label">分钟完成</span></div>
+            </div>
+            <button class="btn btn-primary btn-large" onclick="startAssessment()"><i class="fas fa-play"></i> 开始测评</button>
+            <div class="save-status" id="saveStatus"><i class="fas fa-info-circle"></i><span>测评进度将自动保存</span></div>
+        </div>
+        <div id="questionContainer"></div>
+        <div class="loading-screen" id="loadingScreen">
+            <div class="loading-animation"><div class="loading-ring"></div><div class="loading-ring"></div><div class="loading-ring"></div></div>
+            <div class="loading-text">正在分析你的职业倾向<span class="loading-dots"></span></div>
+            <div class="loading-subtext">计算8维能力画像，匹配最佳职业方向</div>
+        </div>
+        <div class="results-screen" id="resultsScreen">
+            <div class="result-hero">
+                <div class="result-badge" id="resultType">-</div>
+                <h2 class="result-title" id="resultTitle"></h2>
+                <p class="result-description" id="resultDescription"></p>
+            </div>
+            <div class="dimensions-section">
+                <div class="section-header"><div class="section-icon"><i class="fas fa-chart-bar"></i></div><h3 class="section-title">六维能力画像</h3></div>
+                <div class="dimension-cards" id="dimensionCards"></div>
+            </div>
+            <div class="axis-section">
+                <div class="section-header"><div class="section-icon"><i class="fas fa-sliders-h"></i></div><h3 class="section-title">偏好倾向</h3></div>
+                <div class="axis-container">
+                    <!-- 中医药偏好轴 -->
+                    <div class="axis-item">
+                        <div class="axis-labels">
+                            <span class="axis-label-left">现代生物医药</span>
+                            <span class="axis-label-right">中医药情怀型</span>
+                        </div>
+                        <div class="axis-bar">
+                            <div class="axis-marker" id="tcmMarker"></div>
+                        </div>
+                        <div class="axis-score" id="tcmScore"></div>
+                    </div>
+                    <!-- 风险偏好轴 -->
+                    <div class="axis-item">
+                        <div class="axis-labels">
+                            <span class="axis-label-left">稳健规划型</span>
+                            <span class="axis-label-right">冒险创业型</span>
+                        </div>
+                        <div class="axis-bar">
+                            <div class="axis-marker" id="riskMarker"></div>
+                        </div>
+                        <div class="axis-score" id="riskScore"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="careers-section">
+                <div class="section-header"><div class="section-icon"><i class="fas fa-bullseye"></i></div><h3 class="section-title">推荐职业方向</h3></div>
+                <div class="career-cards" id="careerCards"></div>
+            </div>
+            <div class="action-section">
+                <div class="action-buttons">
+                    <button class="action-btn" onclick="restartAssessment()"><i class="fas fa-redo"></i><span>重新测评</span></button>
+                    <button class="action-btn" onclick="saveResult()"><i class="fas fa-download"></i><span>保存报告</span></button>
+                    <button class="action-btn" onclick="shareResult()"><i class="fas fa-share-alt"></i><span>分享结果</span></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="toast" id="toast"></div>
+    <script>
+
+// 6个主维度
+const dimensions={
+    research:{name:'研究探索型',code:'R',description:'热衷于探索未知，享受发现新知识的过程',icon:'🔬'},
+    practical:{name:'应用实践型',code:'P',description:'注重实际应用，善于将理论转化为解决方案',icon:'⚙️'},
+    business:{name:'商业运营型',code:'B',description:'具有商业敏感度，善于发现市场机会',icon:'💼'},
+    social:{name:'人际互动型',code:'S',description:'善于与人沟通，享受帮助他人的过程',icon:'🤝'},
+    technical:{name:'技术工程型',code:'T',description:'喜欢动手操作，擅长解决技术问题',icon:'🔧'},
+    analytical:{name:'数据分析型',code:'A',description:'善于从数据中发现规律，逻辑思维能力突出',icon:'📊'},
+    // 2个独立轴
+    tcm:{name:'中医药偏好',code:'C',description:'对中医药理论、实践、现代化的兴趣程度',icon:'🌿',type:'axis'},
+    risk:{name:'风险偏好',code:'X',description:'对职业稳定性vs高风险高回报的偏好',icon:'⚡',type:'axis'}
+};
+
+// 四选一题目库 - 全部使用偏好选择句式
+const questionBank=[
+    // ========== 研究探索型题目 ==========
+    {id:1,dimension:'research',type:'preference',text:'面对海量前沿文献，你更倾向哪种方式？',scenario:'你刚进入一个新领域，需要快速了解研究现状。',options:[
+        {text:'你更看重实用性，只精读与当前工作直接相关的文献',score:{research:0.5,practical:1}},
+        {text:'你倾向于有选择性，关注几个核心研究方向的进展',score:{research:1,analytical:0.5}},
+        {text:'你乐于广泛涉猎，主动追踪多个领域的最新突破',score:{research:1.5,analytical:0.5}},
+        {text:'你渴望全面掌握，系统性地阅读并建立完整知识图谱',score:{research:2,analytical:1}}
+    ]},
+    {id:2,dimension:'research',type:'preference',text:'当实验结果与预期相反时，你更享受哪种反应？',scenario:'你进行了数周的实验，最终数据却完全颠覆了最初的假设。',options:[
+        {text:'你倾向于检查流程，确保没有操作失误导致异常',score:{practical:1,research:0.5}},
+        {text:'你觉得有趣，愿意花时间去理解背后的原因',score:{research:1,analytical:0.5}},
+        {text:'你感到兴奋，这可能意味着隐藏的新发现',score:{research:1.5,analytical:1}},
+        {text:'你异常激动，因为这可能意味着发现了新大陆',score:{research:2,analytical:1.5}}
+    ]},
+    {id:3,dimension:'research',type:'preference',text:'选择研究课题时，你更看重什么？',scenario:'你有机会自主选择博士或硕士的研究方向。',options:[
+        {text:'你更看重顺利毕业，选择有把握完成的课题',score:{practical:1}},
+        {text:'你倾向于考虑应用价值和就业前景',score:{practical:0.5,business:0.5,research:0.5}},
+        {text:'你追求科学意义与实际应用的平衡',score:{research:1,practical:0.5}},
+        {text:'你渴望纯粹的科学探索，即使短期内看不到应用价值',score:{research:2}}
+    ]},
+    {id:4,dimension:'research',type:'preference',text:'撰写论文时，你最享受哪个环节？',scenario:'你正在完成一篇研究论文的撰写工作。',options:[
+        {text:'你更喜欢整理数据和图表，呈现清晰的实验结果',score:{analytical:1,practical:0.5}},
+        {text:'你倾向于详细描述方法，确保他人可以复现',score:{practical:1,research:0.5}},
+        {text:'你享受结果分析，从数据中提取有价值的信息',score:{research:1,analytical:1}},
+        {text:'你最爱讨论部分，阐释发现的深层科学意义',score:{research:1.5,analytical:1.5}}
+    ]},
+    {id:5,dimension:'research',type:'preference',text:'在学术交流中，你更喜欢哪种参与方式？',scenario:'你参加了本领域的年度学术会议，有多种活动可选。',options:[
+        {text:'你倾向于与熟悉的同行深入交流，建立合作关系',score:{social:1,business:0.5}},
+        {text:'你喜欢听前沿报告，了解最新科学进展',score:{research:1,analytical:0.5}},
+        {text:'你乐于参与讨论，提出自己的见解和疑问',score:{research:1.5,analytical:1}},
+        {text:'你渴望成为焦点，主动发起话题引导讨论方向',score:{research:1.5,analytical:1.5,social:0.5}}
+    ]},
+    {id:6,dimension:'research',type:'preference',text:'面对一个全新的研究领域，你的感受是？',scenario:'导师向你介绍了一个尚无人涉足的研究方向，充满未知但也意味着高风险。',options:[
+        {text:'你倾向于选择成熟稳定的研究方向，降低不确定性',score:{practical:1}},
+        {text:'你愿意尝试，但会谨慎评估风险和可行性',score:{research:0.5,analytical:0.5}},
+        {text:'你乐于接受挑战，探索新领域令你兴奋',score:{research:1.5}},
+        {text:'你渴望这样的机会，未知意味着无限可能',score:{research:2,analytical:0.5}}
+    ]},
+    
+    // ========== 应用实践型题目 ==========
+    {id:7,dimension:'practical',type:'preference',text:'面对复杂的实验操作，你的学习方式是？',scenario:'你需要掌握一项新的细胞培养或分子生物学技术。',options:[
+        {text:'你倾向于先深入阅读文献，理解透彻再动手',score:{research:1}},
+        {text:'你喜欢边看书边操作，理论与实践结合',score:{research:0.5,practical:0.5}},
+        {text:'你先看一遍示范，然后直接动手实践',score:{practical:1,technical:0.5}},
+        {text:'你更喜欢直接动手，在实践中学习和改进',score:{practical:1.5,technical:1}}
+    ]},
+    {id:8,dimension:'practical',type:'preference',text:'当实验设备出现故障时，你会怎么处理？',scenario:'关键仪器如HPLC或PCR仪突然无法正常工作。',options:[
+        {text:'你倾向于联系工程师，专业的事交给专业的人',score:{business:0.5}},
+        {text:'你会查阅手册，然后联系技术支持',score:{technical:0.5,analytical:0.5}},
+        {text:'你喜欢自己排查常见问题，尝试解决',score:{practical:0.5,technical:1}},
+        {text:'你热衷于动手修理，把这当作学习机会',score:{practical:1.5,technical:1.5}}
+    ]},
+    {id:9,dimension:'practical',type:'preference',text:'遇到设备小故障时，你会尝试自己解决吗？',scenario:'实验室设备出现常见问题的处理习惯。',options:[
+        {text:'你倾向于报修，等待专业人员处理',score:{business:0.5}},
+        {text:'简单问题你会尝试，复杂问题直接报修',score:{technical:0.5}},
+        {text:'你习惯先自己排查，解决不了再寻求帮助',score:{practical:0.5,technical:1}},
+        {text:'你喜欢自己解决问题，把故障当学习机会',score:{practical:1.5,technical:1.5}}
+    ]},
+    
+    // ========== 商业运营型题目 ==========
+    {id:10,dimension:'business',type:'preference',text:'当你听说一款新药获批上市时，你首先想到什么？',scenario:'你所在公司或关注领域的抗癌药刚刚获得NMPA批准。',options:[
+        {text:'你更关心它的科学原理和作用机制',score:{research:1}},
+        {text:'你关注它将如何改变治疗方案和患者生活',score:{social:1,research:0.5}},
+        {text:'你思考它的竞争优势和市场定位',score:{business:0.5,analytical:0.5}},
+        {text:'你立即评估它的市场潜力和商业价值',score:{business:1.5,analytical:1}}
+    ]},
+    {id:11,dimension:'business',type:'preference',text:'面对一个商业机会，你的决策依据是什么？',scenario:'你发现了一个潜在的投资或合作机会。',options:[
+        {text:'你只关注技术创新性，其他都不重要',score:{research:1}},
+        {text:'你考虑技术可行性和长期竞争力',score:{research:0.5,analytical:0.5}},
+        {text:'你平衡市场需求和盈利模式',score:{business:0.5,analytical:1}},
+        {text:'你严格评估市场需求和盈利模式的可行性',score:{business:1.5,analytical:1.5}}
+    ]},
+    {id:12,dimension:'business',type:'preference',text:'对于创业，你的态度是？',scenario:'你正在考虑毕业后的职业选择，有人提议一起创业。',options:[
+        {text:'你偏好稳定，在大平台积累经验',score:{practical:1}},
+        {text:'如果有好的机会可以考虑，但不会主动追求',score:{business:0.5}},
+        {text:'你愿意承担一定风险，追求更高回报',score:{business:1,research:0.5}},
+        {text:'你渴望创业，愿意承担风险追求梦想',score:{business:1.5,research:1}}
+    ]},
+    {id:13,dimension:'business',type:'preference',text:'制定产品策略时，你最看重什么？',scenario:'你负责一款新药或诊断产品的市场推广策略。',options:[
+        {text:'你只关注产品的临床价值和科学性',score:{research:1,social:0.5}},
+        {text:'你优先考虑患者获益和临床需求',score:{social:1,research:0.5}},
+        {text:'你平衡市场定位和竞争策略',score:{business:0.5,analytical:1}},
+        {text:'你追求精准的市场定位和差异化竞争策略',score:{business:1.5,analytical:1.5}}
+    ]},
+    {id:14,dimension:'business',type:'preference',text:'你会关注医药行业的商业动态吗？',scenario:'平时的信息获取习惯。',options:[
+        {text:'你只关注学术内容，对商业不感兴趣',score:{research:0.5}},
+        {text:'看到相关新闻你会浏览一下',score:{business:0.5}},
+        {text:'你主动关注行业动态，了解市场趋势',score:{business:1,analytical:0.5}},
+        {text:'你每天必看行业资讯，深入分析商业模式',score:{business:1.5,analytical:1}}
+    ]},
+    {id:15,dimension:'business',type:'preference',text:'在团队讨论中，你会提出商业角度的观点吗？',scenario:'项目讨论会议中的发言习惯。',options:[
+        {text:'你只从技术或科学角度发言',score:{research:0.5}},
+        {text:'涉及资源或成本时你会提及',score:{business:0.5,practical:0.5}},
+        {text:'你主动考虑可行性、成本和市场因素',score:{business:1,practical:0.5}},
+        {text:'你习惯性从商业价值角度思考问题',score:{business:1.5,analytical:0.5}}
+    ]},
+    
+    // ========== 人际互动型题目 ==========
+    {id:16,dimension:'social',type:'preference',text:'当同事遇到困难向你求助时，你会怎么做？',scenario:'一位同事在实验设计或数据分析上遇到了瓶颈。',options:[
+        {text:'你建议他自己查资料解决，不想被打扰',score:{research:0.5}},
+        {text:'你分析问题，提供具体解决方案',score:{analytical:1,practical:1}},
+        {text:'你耐心倾听，给予情感支持和鼓励',score:{social:1,research:0.5}},
+        {text:'你不仅帮助解决问题，还会持续关心进展',score:{social:1.5,practical:0.5}}
+    ]},
+    {id:17,dimension:'social',type:'preference',text:'在社交场合中，你通常怎么做？',scenario:'你参加了一个行业交流晚宴或学术聚会。',options:[
+        {text:'你尽量避免社交活动，觉得耗费精力',score:{research:0.5}},
+        {text:'你与熟悉的人深入交流，不主动结识新人',score:{research:0.5}},
+        {text:'你乐于结识新朋友，拓展人脉圈',score:{social:1,business:0.5}},
+        {text:'你主动与陌生人交流，享受建立新联系',score:{social:1.5,business:1}}
+    ]},
+    {id:18,dimension:'social',type:'preference',text:'你更愿意在哪种环境中工作？',scenario:'想象你的理想工作场景。',options:[
+        {text:'你偏好完全独立工作，避免与人互动',score:{research:1,analytical:0.5}},
+        {text:'你偶尔需要沟通，但大部分时间独立工作',score:{research:0.5,analytical:0.5}},
+        {text:'你喜欢团队协作，需要频繁的人际互动',score:{social:1,business:0.5}},
+        {text:'你偏好高度社交化的环境，与人打交道是主要工作',score:{social:1.5,business:1}}
+    ]},
+    {id:19,dimension:'social',type:'preference',text:'培训新人时，你的方式是？',scenario:'你需要指导一位刚入职的实习生或新同事。',options:[
+        {text:'你提供资料让其自学，不占用自己时间',score:{research:0.5}},
+        {text:'你系统讲解知识点，让其理解原理',score:{research:1,practical:0.5}},
+        {text:'你手把手教，边做边讲，注重实践',score:{social:1,practical:1}},
+        {text:'你不仅教技能，还关心其职业发展和心理状态',score:{social:1.5,practical:0.5}}
+    ]},
+    {id:20,dimension:'social',type:'preference',text:'你会主动与同事交流工作或生活吗？',scenario:'日常工作中的社交互动频率。',options:[
+        {text:'除了工作必要沟通，你不主动交流',score:{research:0.5}},
+        {text:'你与熟悉的同事会聊聊天',score:{social:0.5}},
+        {text:'你乐于与同事交流，建立良好关系',score:{social:1,business:0.5}},
+        {text:'你主动关心他人，是团队中的活跃分子',score:{social:1.5,business:0.5}}
+    ]},
+    {id:21,dimension:'social',type:'preference',text:'在会议或讨论中，你会主动发言吗？',scenario:'团队会议或学术讨论中的表现。',options:[
+        {text:'你尽量保持沉默，听别人说',score:{analytical:0.5}},
+        {text:'你被问到或有重要观点时才会发言',score:{research:0.5}},
+        {text:'你积极参与讨论，分享自己的想法',score:{social:1,research:0.5}},
+        {text:'你主动引导讨论，善于激发团队思考',score:{social:1.5,business:0.5}}
+    ]},
+    {id:22,dimension:'social',type:'preference',text:'你会主动帮助新同事适应环境吗？',scenario:'团队中有新人加入时的表现。',options:[
+        {text:'你忙于自己的工作，无暇顾及他人',score:{business:0.5}},
+        {text:'被问到时你会提供帮助',score:{social:0.5}},
+        {text:'你主动关心新人，分享经验和资源',score:{social:1,practical:0.5}},
+        {text:'你像导师一样，全方位帮助新人成长',score:{social:1.5,practical:1}}
+    ]},
+    
+    // ========== 技术工程型题目 ==========
+    {id:23,dimension:'technical',type:'preference',text:'面对一台复杂的仪器设备，你会怎么做？',scenario:'实验室新到了一台从未用过的质谱仪或测序仪。',options:[
+        {text:'你等待厂家培训，不想自己摸索',score:{business:0.5}},
+        {text:'你先阅读原理文献，理解透彻再操作',score:{research:1}},
+        {text:'你先看操作手册，然后尝试上手',score:{technical:0.5,practical:0.5}},
+        {text:'你直接动手摸索，在实践中掌握',score:{technical:1.5,practical:1}}
+    ]},
+    {id:24,dimension:'technical',type:'preference',text:'对于编程和自动化，你的态度是？',scenario:'实验室正在推进数字化转型，需要学习编程工具。',options:[
+        {text:'你对此没有兴趣，手动操作更可靠',score:{practical:0.5}},
+        {text:'你愿意学习，只要能提高效率即可',score:{practical:0.5}},
+        {text:'你主动学习Python等编程语言',score:{analytical:0.5,technical:1}},
+        {text:'你热衷于开发自动化工具，享受编程过程',score:{analytical:1,technical:1.5}}
+    ]},
+    {id:25,dimension:'technical',type:'preference',text:'工艺开发中，你最享受什么？',scenario:'你正在优化一个药物的生产工艺或实验流程。',options:[
+        {text:'你只关注最终能否成功，过程不重要',score:{}},
+        {text:'你分析数据，建立预测模型',score:{analytical:1}},
+        {text:'你调试参数，找到最佳条件',score:{technical:0.5,practical:0.5}},
+        {text:'你深入研究原理，从根本上优化工艺',score:{technical:1.5,research:0.5}}
+    ]},
+    {id:26,dimension:'technical',type:'preference',text:'遇到技术难题时，你的解决思路是？',scenario:'设备反复出现同样故障，常规方法无法解决。',options:[
+        {text:'你直接更换设备或寻求外部帮助',score:{business:0.5}},
+        {text:'你尝试不同方法，找到可行的临时方案',score:{practical:1}},
+        {text:'你深入研究原理，寻找根本解决方案',score:{research:0.5,technical:1}},
+        {text:'你彻底拆解分析，从根本上理解并解决问题',score:{research:1,technical:1.5}}
+    ]},
+    {id:27,dimension:'technical',type:'preference',text:'你会主动学习新的实验技术或软件工具吗？',scenario:'面对新技术的学习态度。',options:[
+        {text:'你掌握现有技能就够了，不想学新的',score:{practical:0.5}},
+        {text:'工作需要时你才会学习',score:{practical:0.5}},
+        {text:'你主动学习新工具，提升工作效率',score:{technical:1,analytical:0.5}},
+        {text:'你热衷于尝试新技术，保持技术敏感度',score:{technical:1.5,analytical:1}}
+    ]},
+    
+    // ========== 数据分析型题目 ==========
+    {id:28,dimension:'analytical',type:'preference',text:'面对一堆实验数据，你的第一反应是？',scenario:'你完成了一批实验，获得大量原始数据需要处理。',options:[
+        {text:'你感到头疼，希望有人帮忙处理',score:{social:0.5}},
+        {text:'你按部就班地整理和清洗数据',score:{practical:1}},
+        {text:'你兴奋，可以从中发现有趣规律',score:{analytical:0.5,research:0.5}},
+        {text:'你迫不及待地想要挖掘数据背后的故事',score:{analytical:1.5,research:1}}
+    ]},
+    {id:29,dimension:'analytical',type:'preference',text:'对于统计学和机器学习，你的态度是？',scenario:'需要为毕业论文或项目选择数据分析方法。',options:[
+        {text:'你觉得过于复杂，能用简单方法就不用复杂的',score:{practical:0.5}},
+        {text:'够用就行，你专注于生物学问题本身',score:{research:1}},
+        {text:'你非常感兴趣，主动深入学习',score:{analytical:0.5,technical:0.5}},
+        {text:'你热衷于探索新算法，享受建模过程',score:{analytical:1.5,technical:1}}
+    ]},
+    {id:30,dimension:'analytical',type:'preference',text:'做决策时，你更依赖什么？',scenario:'需要为团队选择技术方案或研究方向。',options:[
+        {text:'你依赖直觉和经验，快速做决定',score:{business:0.5}},
+        {text:'你参考团队共识和专家意见',score:{social:1,business:0.5}},
+        {text:'你结合数据和经验，综合判断',score:{analytical:0.5,practical:0.5}},
+        {text:'你严格的数据分析，量化评估对比',score:{analytical:1.5}}
+    ]},
+    {id:31,dimension:'analytical',type:'preference',text:'你会对实验数据进行深入分析吗？',scenario:'获得实验数据后的处理习惯。',options:[
+        {text:'你只看主要结果，不深究细节',score:{practical:0.5}},
+        {text:'你发现异常时才会深入分析',score:{analytical:0.5,research:0.5}},
+        {text:'你系统分析数据，寻找潜在规律',score:{analytical:1,research:0.5}},
+        {text:'你深度挖掘数据，多角度验证结论',score:{analytical:1.5,research:1}}
+    ]},
+    {id:32,dimension:'analytical',type:'preference',text:'你会使用数据可视化工具呈现结果吗？',scenario:'准备报告或论文时的习惯。',options:[
+        {text:'简单的表格就够了',score:{}},
+        {text:'必要时你制作基础图表',score:{analytical:0.5}},
+        {text:'你注重图表质量，让数据更直观',score:{analytical:1,business:0.5}},
+        {text:'你精心设计可视化，追求最佳呈现效果',score:{analytical:1.5,business:1}}
+    ]},
+    {id:33,dimension:'analytical',type:'preference',text:'你会记录和复盘自己的工作和学习吗？',scenario:'个人成长和工作总结的习惯。',options:[
+        {text:'你做完就结束，不回顾总结',score:{}},
+        {text:'重要项目结束后你会简单总结',score:{analytical:0.5}},
+        {text:'你定期复盘，记录经验教训',score:{analytical:1,practical:0.5}},
+        {text:'你系统记录，建立个人知识管理体系',score:{analytical:1.5,research:0.5}}
+    ]},
+    
+    // ========== 情景选择题 ==========
+    {id:34,dimension:'research',type:'preference',text:'实习期间，导师给你两个任务选择，你更倾向于？',scenario:'一个任务是整理实验室的历史数据，进行回顾性分析；另一个是参与新项目的客户沟通和需求调研。',options:[
+        {text:'你毫不犹豫选择数据分析，可以安静地研究数据规律',score:{research:1,analytical:1.5}},
+        {text:'你倾向于数据分析，但也会考虑客户沟通的价值',score:{research:0.5,analytical:1}},
+        {text:'你倾向于客户沟通，可以了解实际需求',score:{business:0.5,social:0.5}},
+        {text:'你毫不犹豫选择客户沟通，喜欢与人交流互动',score:{business:1,social:1.5}}
+    ]},
+    {id:35,dimension:'research',type:'preference',text:'毕业论文选题时，你更偏好哪种方向？',scenario:'导师给了两个选题方向：一个是探索某基因功能的纯学术研究，另一个是开发一种可产业化的检测方法。',options:[
+        {text:'你坚定选择学术研究，探索未知更有意义',score:{research:1.5}},
+        {text:'你倾向于学术研究，但也会考虑应用前景',score:{research:1,practical:0.5}},
+        {text:'你倾向于产业应用，能产生实际价值',score:{practical:1,business:0.5}},
+        {text:'你坚定选择产业应用，解决实际问题更重要',score:{practical:1.5,business:1}}
+    ]},
+    {id:36,dimension:'analytical',type:'preference',text:'在项目执行过程中，你最喜欢哪个环节？',scenario:'一个完整的研发项目包括：实验设计、实验操作、数据分析和报告撰写。',options:[
+        {text:'你最喜欢数据分析，从数据中发现规律最有成就感',score:{analytical:1.5,research:0.5}},
+        {text:'你倾向于数据分析，但也享受实验操作',score:{analytical:1,practical:0.5}},
+        {text:'你倾向于实验操作，动手实践更有实感',score:{practical:1,technical:0.5}},
+        {text:'你最喜欢实验操作，亲手完成实验过程很满足',score:{practical:1.5,technical:1}}
+    ]},
+    {id:37,dimension:'research',type:'preference',text:'你更愿意参与哪种类型的项目？',scenario:'一个是可以独立完成的科研项目，另一个是需要跨部门协作的大型项目。',options:[
+        {text:'你更喜欢独立科研，可以专注深入研究',score:{research:1.5,analytical:0.5}},
+        {text:'你倾向于独立科研，但也能接受协作',score:{research:1}},
+        {text:'你倾向于跨部门协作，可以学习不同领域',score:{social:0.5,business:0.5}},
+        {text:'你更喜欢跨部门协作，多元视角更有价值',score:{social:1,business:1}}
+    ]},
+    {id:38,dimension:'research',type:'preference',text:'你更适应哪种工作节奏？',scenario:'一种是需要深度思考、长期专注的研究工作；另一种是快节奏、多线并行的项目管理工作。',options:[
+        {text:'你更适应深度思考，沉浸式工作更有成就感',score:{research:1.5,analytical:1}},
+        {text:'你倾向于深度思考，但也能适应快节奏',score:{research:1,analytical:0.5}},
+        {text:'你倾向于快节奏，多任务并行更有挑战',score:{business:0.5,practical:0.5}},
+        {text:'你更适应快节奏多线并行，喜欢变化和挑战',score:{business:1,social:0.5}}
+    ]},
+    {id:39,dimension:'social',type:'preference',text:'项目结题时，你更偏好哪种展示方式？',scenario:'可以提交详细的技术报告，或者在大会上做演讲展示。',options:[
+        {text:'你更偏好技术报告，可以详细阐述技术细节',score:{analytical:1,technical:0.5}},
+        {text:'你倾向于技术报告，但也能接受演讲',score:{analytical:0.5}},
+        {text:'你倾向于演讲展示，可以与听众互动',score:{social:0.5,business:0.5}},
+        {text:'你更偏好演讲展示，享受舞台和影响力',score:{social:1.5,business:1}}
+    ]},
+    {id:40,dimension:'research',type:'preference',text:'工作中，你的成就感主要来自？',scenario:'一种是在学术上有所发现，发表高水平论文；另一种是参与的产品成功上市，产生商业价值。',options:[
+        {text:'学术发现带来的成就感更大',score:{research:1.5,analytical:1}},
+        {text:'你倾向于学术成就，但商业价值也重要',score:{research:1,business:0.5}},
+        {text:'你倾向于产品上市，能看到实际影响',score:{business:0.5,practical:0.5}},
+        {text:'产品上市带来的成就感更大',score:{business:1.5,practical:1}}
+    ]},
+    {id:41,dimension:'technical',type:'preference',text:'如果要学习一项新技能，你更倾向于？',scenario:'可以选择深入学习编程和AI工具，或者精进传统实验技能。',options:[
+        {text:'你坚定选择编程/AI，这是未来趋势',score:{technical:1.5,analytical:1.5}},
+        {text:'你倾向于编程/AI，但实验技能也重要',score:{technical:1,analytical:1}},
+        {text:'你倾向于实验技能，动手能力是基础',score:{practical:1,technical:0.5}},
+        {text:'你坚定选择实验技能，这是核心竞争力',score:{practical:1.5,technical:0.5}}
+    ]},
+    
+    // ========== 独立轴题目：中医药偏好 ==========
+    {id:42,axis:'tcm',type:'preference',text:'学校开设了《中医药基础理论》选修课，你的态度是？',scenario:'这门课介绍中医的基本理论、中药药理和现代化研究进展。',options:[
+        {text:'你不感兴趣，更想学习现代分子生物学课程',score:{tcm:-2}},
+        {text:'你可能会选，但优先考虑其他课程',score:{tcm:-1}},
+        {text:'你会认真考虑，中医药有独特价值',score:{tcm:1,practical:0.5}},
+        {text:'你非常感兴趣，主动学习中医药知识',score:{tcm:2,research:0.5}}
+    ]},
+    {id:43,axis:'tcm',type:'preference',text:'对于中医药理论，你的看法是？',scenario:'中医药有着数千年的理论和实践积累。',options:[
+        {text:'你觉得缺乏科学依据，更信任现代医学',score:{tcm:-2}},
+        {text:'你持保留态度，需要更多现代研究验证',score:{tcm:-1,research:0.5}},
+        {text:'你认为有一定价值，值得学习和研究',score:{tcm:1,practical:0.5}},
+        {text:'你觉得博大精深，蕴含独特的智慧体系',score:{tcm:2,research:0.5}}
+    ]},
+    {id:44,axis:'tcm',type:'preference',text:'对于"中医药现代化"这个方向，你的态度是？',scenario:'近年来国家大力推动中医药现代化研究。',options:[
+        {text:'你不太看好，现代医学已经足够先进',score:{tcm:-2}},
+        {text:'你持观望态度，看具体研究方向',score:{tcm:-1,analytical:0.5}},
+        {text:'你支持，这是传承与创新结合的方向',score:{tcm:1,business:0.5}},
+        {text:'你非常看好，愿意投身这个领域',score:{tcm:2,research:1,business:0.5}}
+    ]},
+    {id:45,axis:'tcm',type:'preference',text:'如果有机会参与新药研发，你更倾向于？',scenario:'可以选择现代小分子药物研发，或者中药新药研发。',options:[
+        {text:'你坚定选择现代药物研发，技术路线更清晰',score:{tcm:-2,technical:1}},
+        {text:'你倾向于现代药物，但中药研发也有价值',score:{tcm:-1,technical:0.5}},
+        {text:'你对中药研发有兴趣，有独特优势',score:{tcm:1,practical:0.5}},
+        {text:'你更倾向于中药研发，传承中有创新',score:{tcm:2,research:0.5,practical:0.5}}
+    ]},
+    {id:46,axis:'tcm',type:'preference',text:'对于中药材的质量标准和药理研究，你的兴趣程度？',scenario:'中药材的标准化和现代化是行业重要方向。',options:[
+        {text:'你不太感兴趣，更关注合成药物',score:{tcm:-2}},
+        {text:'你有一定兴趣，但不是优先方向',score:{tcm:-1}},
+        {text:'你比较感兴趣，这是有价值的方向',score:{tcm:1,analytical:0.5}},
+        {text:'你非常感兴趣，愿意深入研究',score:{tcm:2,research:1,analytical:0.5}}
+    ]},
+    
+    // ========== 独立轴题目：风险偏好 ==========
+    {id:47,axis:'risk',type:'preference',text:'毕业时你收到两个offer，你会选择？',scenario:'A是知名药企的研发岗，稳定有保障；B是初创生物技术公司的核心研发，有期权但风险高。',options:[
+        {text:'你毫不犹豫选择大药企，稳定发展更重要',score:{risk:-2,practical:0.5}},
+        {text:'你倾向于大药企，但也会考虑创业公司的潜力',score:{risk:-1}},
+        {text:'你倾向于创业公司，有机会快速成长',score:{risk:1,business:0.5}},
+        {text:'你毫不犹豫选择创业公司，高风险高回报更刺激',score:{risk:2,business:1}}
+    ]},
+    {id:48,axis:'risk',type:'preference',text:'对于职业发展，你的态度是？',scenario:'一种路径是稳定晋升，收入可预期；另一种是可能跳跃式发展，但也可能遇到挫折。',options:[
+        {text:'你偏好稳定路径，可预期的发展更安心',score:{risk:-2,practical:0.5}},
+        {text:'你倾向于稳定，但也会把握机会',score:{risk:-1}},
+        {text:'你愿意承担一定风险，追求更大发展',score:{risk:1,business:0.5}},
+        {text:'你偏好高风险高回报，人生需要挑战',score:{risk:2,business:1}}
+    ]},
+    {id:49,axis:'risk',type:'preference',text:'如果有机会加入创业团队，你的态度是？',scenario:'一个朋友邀请你加入他的生物医药创业项目。',options:[
+        {text:'你不会考虑，稳定工作更重要',score:{risk:-2,practical:0.5}},
+        {text:'你会谨慎评估，风险承受能力有限',score:{risk:-1,analytical:0.5}},
+        {text:'你有兴趣，会认真考虑项目前景',score:{risk:1,business:0.5}},
+        {text:'你非常感兴趣，创业是实现梦想的机会',score:{risk:2,business:1}}
+    ]},
+    {id:50,axis:'risk',type:'preference',text:'在职业选择上，你更看重什么？',scenario:'面临职业决策时，稳定性和发展潜力往往需要权衡。',options:[
+        {text:'你更看重稳定性，避免不必要的风险',score:{risk:-2,practical:1}},
+        {text:'你倾向于稳定，但也会考虑成长空间',score:{risk:-1}},
+        {text:'你倾向于发展潜力，愿意承担一定风险',score:{risk:1,research:0.5}},
+        {text:'你觉得高风险高回报更有吸引力，人生需要冒险',score:{risk:2,business:1}}
+    ]},
+    {id:51,axis:'risk',type:'preference',text:'对于职业投资（如出国深造、转行），你的态度是？',scenario:'这些选择可能带来更大发展，但也意味着不确定性和成本。',options:[
+        {text:'你倾向于在现有轨道上稳定积累',score:{risk:-2,practical:0.5}},
+        {text:'你会考虑，但需要充分评估风险',score:{risk:-1,analytical:0.5}},
+        {text:'你愿意尝试，投资自己值得冒险',score:{risk:1,research:0.5}},
+        {text:'你积极寻求突破，不惧怕不确定性',score:{risk:2,business:0.5}}
+    ]},
+    {id:52,axis:'risk',type:'preference',text:'想象十年后的自己，你更希望成为？',scenario:'一个是在某个细分领域有深厚造诣的专家；另一个是成功创业的企业家。',options:[
+        {text:'你希望成为领域专家，深度比广度更重要',score:{risk:-2,research:1.5,analytical:0.5}},
+        {text:'你倾向于专家路线，但也会关注机会',score:{risk:-1,research:1}},
+        {text:'你倾向于创业，创造更大影响力',score:{risk:1,business:1}},
+        {text:'你希望成为创业者，建立自己的事业',score:{risk:2,business:1.5}}
+    ]}
+];
+
+// 职业数组 - 添加tcm和risk偏好值
+const careers=[
+    {name:'学术PI/博士后',vector:[0.85,0.25,0.15,0.2,0.35,0.45],tcm:0.3,risk:0.2,tags:['博士优先','学术道路','基础研究'],description:'在高校或科研院所从事独立研究，探索科学前沿问题。',salary:'15-40万',growth:'慢但稳'},
+    {name:'医药史研究者',vector:[0.75,0.2,0.1,0.35,0.15,0.3],tcm:0.5,risk:0.2,tags:['博士优先','人文交叉','学术岗位'],description:'研究医药发展历史，挖掘传统智慧。',salary:'12-25万',growth:'稳定'},
+    {name:'科学传播作家',vector:[0.6,0.3,0.2,0.7,0.15,0.35],tcm:0.4,risk:0.3,tags:['本科可入行','内容创作','新媒体'],description:'将复杂医学知识转化为公众可理解的内容。',salary:'12-30万',growth:'中等'},
+    {name:'生物信息分析师',vector:[0.55,0.35,0.1,0.15,0.4,0.8],tcm:0.2,risk:0.4,tags:['硕士起步','数据分析','编程'],description:'对组学数据进行分析，为科研和临床提供支持。',salary:'20-50万',growth:'快速'},
+    {name:'CDMO工艺工程师',vector:[0.3,0.85,0.2,0.15,0.65,0.4],tcm:0.3,risk:0.3,tags:['本科可入行','生产制造','GMP'],description:'将实验室工艺放大为规模化生产。',salary:'15-40万',growth:'稳定'},
+    {name:'QA/QC工程师',vector:[0.25,0.8,0.15,0.2,0.55,0.35],tcm:0.3,risk:0.2,tags:['本科可入行','质量管理','稳定'],description:'守护药品质量底线，确保GMP合规。',salary:'12-35万',growth:'稳定'},
+    {name:'CRA临床监查员',vector:[0.3,0.75,0.25,0.4,0.45,0.3],tcm:0.2,risk:0.4,tags:['本科可入行','临床试验','出差多'],description:'监查临床试验质量，是新药上市的守护者。',salary:'15-40万',growth:'快速'},
+    {name:'药品注册专员',vector:[0.35,0.65,0.45,0.25,0.35,0.4],tcm:0.3,risk:0.3,tags:['硕士起步','法规事务','涉外'],description:'负责药品注册申报，连接企业与监管机构。',salary:'18-45万',growth:'快速'},
+    {name:'医学实验室技术员',vector:[0.25,0.8,0.1,0.25,0.6,0.3],tcm:0.3,risk:0.2,tags:['大专可入行','实验操作','稳定'],description:'在实验室执行标准化检测操作。',salary:'8-18万',growth:'慢'},
+    {name:'BD交易专家',vector:[0.3,0.25,0.85,0.5,0.2,0.35],tcm:0.3,risk:0.8,tags:['硕士起步','商务拓展','高薪'],description:'发现和评估外部合作机会，推动战略扩张。',salary:'30-100万',growth:'快速'},
+    {name:'医药投资分析师',vector:[0.35,0.2,0.85,0.25,0.15,0.6],tcm:0.3,risk:0.9,tags:['硕士起步','VC/PE','高回报'],description:'在投资机构评估生物医药项目。',salary:'25-80万',growth:'快速'},
+    {name:'市场准入专员',vector:[0.25,0.4,0.8,0.35,0.15,0.5],tcm:0.3,risk:0.4,tags:['硕士起步','医保谈判','政策'],description:'制定市场准入策略，推动产品进医保。',salary:'20-50万',growth:'中等'},
+    {name:'医药销售代表',vector:[0.15,0.5,0.75,0.7,0.2,0.2],tcm:0.3,risk:0.5,tags:['大专可入行','一线推广','提成制'],description:'将药品推向临床一线，收入与业绩挂钩。',salary:'12-50万',growth:'中等'},
+    {name:'数字营销专员',vector:[0.2,0.35,0.8,0.55,0.3,0.4],tcm:0.3,risk:0.5,tags:['本科可入行','互联网','创意'],description:'利用数字渠道推广医药产品。',salary:'12-35万',growth:'快速'},
+    {name:'MSL医学联络官',vector:[0.5,0.3,0.35,0.85,0.2,0.4],tcm:0.3,risk:0.3,tags:['博士优先','学术推广','KOL管理'],description:'制药企业与医学界的学术桥梁。',salary:'25-60万',growth:'快速'},
+    {name:'遗传咨询师',vector:[0.45,0.4,0.15,0.8,0.25,0.55],tcm:0.2,risk:0.3,tags:['硕士起步','患者服务','新兴职业'],description:'为患者解读基因检测报告，提供遗传风险评估。',salary:'15-35万',growth:'快速'},
+    {name:'医学顾问',vector:[0.4,0.35,0.4,0.75,0.2,0.45],tcm:0.3,risk:0.4,tags:['硕士起步','咨询顾问','高薪'],description:'为医疗机构或企业提供医学专业建议。',salary:'25-60万',growth:'中等'},
+    {name:'公共卫生专员',vector:[0.35,0.4,0.35,0.8,0.2,0.5],tcm:0.3,risk:0.2,tags:['本科可入行','疾控中心','政策'],description:'参与公共卫生事件应对和健康促进。',salary:'12-30万',growth:'中等'},
+    {name:'患者倡导专员',vector:[0.3,0.25,0.4,0.85,0.15,0.3],tcm:0.3,risk:0.3,tags:['本科可入行','患者组织','公益'],description:'代表患者群体，推动权益保障和政策改善。',salary:'12-28万',growth:'稳定'},
+    {name:'医疗器械工程师',vector:[0.35,0.65,0.2,0.15,0.85,0.4],tcm:0.2,risk:0.3,tags:['本科可入行','硬件开发','ISO 13485'],description:'设计和开发医疗设备。',salary:'15-45万',growth:'稳定'},
+    {name:'影像设备工程师',vector:[0.4,0.55,0.15,0.15,0.85,0.5],tcm:0.2,risk:0.3,tags:['硕士起步','影像设备','技术门槛'],description:'开发MRI/CT/超声等医学影像设备。',salary:'20-60万',growth:'中等'},
+    {name:'IVD研发工程师',vector:[0.35,0.7,0.25,0.15,0.75,0.45],tcm:0.2,risk:0.4,tags:['本科可入行','诊断试剂','注册'],description:'开发体外诊断试剂和仪器。',salary:'15-40万',growth:'快速'},
+    {name:'技术支持工程师',vector:[0.25,0.6,0.35,0.55,0.7,0.3],tcm:0.3,risk:0.3,tags:['本科可入行','客户服务','技术+沟通'],description:'为仪器和试剂提供技术支持。',salary:'12-30万',growth:'中等'},
+    {name:'生物材料工程师',vector:[0.5,0.6,0.15,0.2,0.8,0.35],tcm:0.3,risk:0.4,tags:['硕士起步','材料科学','交叉学科'],description:'研发医用植入材料和组织工程产品。',salary:'18-45万',growth:'中等'},
+    {name:'数据科学家',vector:[0.4,0.35,0.3,0.15,0.5,0.95],tcm:0.2,risk:0.6,tags:['硕士起步','AI/ML','高薪稀缺'],description:'用AI解决医药问题，最稀缺的人才类型。',salary:'40-150万',growth:'快速'},
+    {name:'医学AI工程师',vector:[0.35,0.4,0.25,0.15,0.55,0.9],tcm:0.2,risk:0.6,tags:['硕士起步','深度学习','计算机视觉'],description:'开发医学影像AI产品，已有产品获批上市。',salary:'25-80万',growth:'快速'},
+    {name:'临床数据管理员',vector:[0.25,0.55,0.25,0.35,0.4,0.75],tcm:0.2,risk:0.3,tags:['本科可入行','数据管理','稳定'],description:'管理临床试验数据，确保数据质量。',salary:'12-30万',growth:'稳定'},
+    {name:'流行病学家',vector:[0.55,0.35,0.2,0.4,0.2,0.85],tcm:0.2,risk:0.3,tags:['硕士起步','公共卫生','科研'],description:'研究疾病分布规律，为防控提供依据。',salary:'15-40万',growth:'中等'},
+    {name:'药物警戒专员',vector:[0.35,0.5,0.3,0.45,0.3,0.65],tcm:0.2,risk:0.3,tags:['本科可入行','药物安全','合规'],description:'监测和评估药物不良反应。',salary:'12-30万',growth:'稳定'},
+    {name:'注册数据经理',vector:[0.3,0.55,0.4,0.3,0.35,0.7],tcm:0.2,risk:0.3,tags:['硕士起步','CDMS','合规'],description:'管理临床试验数据系统，确保合规。',salary:'18-40万',growth:'快速'},
+    // 新增中医药相关职业
+    {name:'中药研究员',vector:[0.7,0.5,0.2,0.25,0.4,0.45],tcm:0.85,risk:0.3,tags:['硕士起步','中药研发','传统+现代'],description:'从事中药新药研发、质量标准研究或中药药理研究。',salary:'15-45万',growth:'中等'},
+    {name:'中西医结合研究员',vector:[0.65,0.45,0.25,0.35,0.35,0.5],tcm:0.75,risk:0.3,tags:['博士优先','中西医结合','创新方向'],description:'探索中西医结合的治疗方案和研究方法。',salary:'18-50万',growth:'中等'},
+    {name:'中药质量控制专家',vector:[0.35,0.75,0.2,0.2,0.6,0.4],tcm:0.7,risk:0.2,tags:['硕士起步','质量标准','稳定'],description:'建立中药质量标准体系，确保中药产品安全有效。',salary:'15-40万',growth:'稳定'},
+    {name:'中医药国际化专员',vector:[0.4,0.35,0.6,0.6,0.2,0.4],tcm:0.7,risk:0.5,tags:['硕士起步','国际推广','跨文化'],description:'推动中医药产品和理念走向国际市场。',salary:'20-50万',growth:'快速'},
+    // 新增创业/投资相关职业
+    {name:'生物医药创业者',vector:[0.5,0.45,0.7,0.5,0.4,0.5],tcm:0.4,risk:0.95,tags:['博士优先','创业','高风险高回报'],description:'创办生物医药企业，将科研成果转化为产品。',salary:'不确定',growth:'高风险'},
+    {name:'医药行业分析师',vector:[0.35,0.25,0.8,0.4,0.2,0.7],tcm:0.3,risk:0.7,tags:['硕士起步','行业研究','投资'],description:'为投资机构提供行业分析和投资建议。',salary:'25-80万',growth:'快速'}
+];
+
+const dimKeys=['research','practical','business','social','technical','analytical'];
+const dimWeights={research:1.1,practical:1.0,business:1.0,social:1.0,technical:1.0,analytical:1.1};
+// 最大加权距离: sqrt(sum(w^2)) = sqrt(1.21+1+1+1+1+1.21) = sqrt(6.42) ≈ 2.533
+const maxPossibleDist=Math.sqrt(1.21+1+1+1+1+1.21);
+
+let selectedQuestions=[],currentQuestion=0,answers=[],scores={research:0,practical:0,business:0,social:0,technical:0,analytical:0,tcm:0,risk:0};
+
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+
+// 分层随机抽取题目，确保独立轴题目均衡分布
+function selectRandomQuestions() {
+    // 分离独立轴题目和常规题目
+    const axisQuestions = questionBank.filter(q => q.axis);
+    const regularQuestions = questionBank.filter(q => !q.axis);
+    
+    // 确保每个独立轴至少抽到2题，最多3题
+    const tcmQuestions = shuffle(axisQuestions.filter(q => q.axis === 'tcm')).slice(0, 2);
+    const riskQuestions = shuffle(axisQuestions.filter(q => q.axis === 'risk')).slice(0, 2);
+    
+    // 剩余题目从常规题目中抽取
+    const remainingCount = 20 - tcmQuestions.length - riskQuestions.length;
+    const selectedRegular = shuffle(regularQuestions).slice(0, remainingCount);
+    
+    // 合并并打乱顺序
+    selectedQuestions = shuffle([...tcmQuestions, ...riskQuestions, ...selectedRegular]);
+    
+    // 保存选中的题目到localStorage
+    localStorage.setItem('biocareer_v6_questions',JSON.stringify(selectedQuestions));
+}
+
+function initProgressSteps(){
+    const c=document.getElementById('progressSteps');
+    c.innerHTML='';
+    for(let i=0;i<selectedQuestions.length;i++){
+        const s=document.createElement('div');
+        s.className='progress-step';
+        s.id='step-'+i;
+        c.appendChild(s);
+    }
+}
+
+function updateProgress(){
+    const p=(currentQuestion/selectedQuestions.length)*100;
+    document.getElementById('progressFill').style.width=p+'%';
+    document.getElementById('progressPercentage').textContent=Math.round(p)+'%';
+    for(let i=0;i<selectedQuestions.length;i++){
+        const s=document.getElementById('step-'+i);
+        if(i<currentQuestion)s.className='progress-step completed';
+        else if(i===currentQuestion)s.className='progress-step active';
+        else s.className='progress-step';
+    }
+}
+
+function showToast(msg,dur=3000){
+    const t=document.getElementById('toast');
+    t.textContent=msg;
+    t.classList.add('show');
+    setTimeout(()=>t.classList.remove('show'),dur);
+}
+
+function saveProgress(){
+    localStorage.setItem('biocareer_v6',JSON.stringify({currentQuestion,answers,timestamp:new Date().toISOString()}));
+    const ss=document.getElementById('saveStatus');
+    if(ss){ss.innerHTML='<i class="fas fa-check-circle"></i><span>进度已保存</span>';ss.classList.add('saved')}
+}
+
+function loadProgress(){
+    const s=localStorage.getItem('biocareer_v6');
+    if(s){const d=JSON.parse(s);if(d.answers&&d.answers.length>0){currentQuestion=d.currentQuestion||0;answers=d.answers||[];return true}}
+    return false;
+}
+
+function clearProgress(){
+    localStorage.removeItem('biocareer_v6');
+    localStorage.removeItem('biocareer_v6_questions');
+}
+
+function startAssessment(){
+    if(loadProgress()&&currentQuestion>0){
+        if(confirm('检测到上次进度：第'+(currentQuestion+1)+'题，是否继续？')){
+            selectedQuestions=JSON.parse(localStorage.getItem('biocareer_v6_questions'))||[];
+            if(selectedQuestions.length===0){
+                selectRandomQuestions();
+            }
+            document.getElementById('welcomeScreen').style.display='none';
+            document.getElementById('progressContainer').style.display='block';
+            initProgressSteps();renderQuestion();return;
+        }else{clearProgress()}
+    }
+    selectRandomQuestions();
+    currentQuestion=0;answers=[];
+    document.getElementById('welcomeScreen').style.display='none';
+    document.getElementById('progressContainer').style.display='block';
+    initProgressSteps();renderQuestion();
+}
+
+function getTypeLabel(q){
+    if(q.axis){
+        const axisInfo = dimensions[q.axis];
+        return '<span class="axis-tag">'+axisInfo.icon+' '+axisInfo.name+'</span>';
+    }
+    return'<span class="question-type-tag">偏好选择</span>';
+}
+
+function getTypeHint(q){
+    if(q.axis)return'<p style="font-size:0.85rem;color:var(--text-light);margin-top:8px;"><i class="fas fa-info-circle"></i> 独立轴题目：选择最符合你真实想法的选项</p>';
+    return'<p style="font-size:0.85rem;color:var(--text-light);margin-top:8px;"><i class="fas fa-info-circle"></i> 选择最符合你偏好的选项，没有标准答案</p>';
+}
+
+function renderQuestion(){
+    const c=document.getElementById('questionContainer'),q=selectedQuestions[currentQuestion];
+    let d,tagLabel;
+    if(q.axis){
+        d=dimensions[q.axis];
+        tagLabel='<span class="dimension-tag" style="background:linear-gradient(135deg,#fef3c7,#fde68a);color:#92400e;">'+d.icon+' '+d.name+'</span>';
+    }else{
+        d=dimensions[q.dimension];
+        tagLabel='<span class="dimension-tag">'+d.icon+' '+d.name+'</span>';
+    }
+    const typeLabel=getTypeLabel(q);
+    const typeHint=getTypeHint(q);
+    c.innerHTML='<div class="question-card active"><div class="question-header"><span class="question-number">问题 '+(currentQuestion+1)+' / '+selectedQuestions.length+'</span>'+tagLabel+typeLabel+'</div><h3 class="question-text">'+q.text+'</h3><div class="scenario-box"><p>'+q.scenario+'</p>'+typeHint+'</div><div class="options-container">'+q.options.map((o,i)=>'<button class="option-btn '+(answers[currentQuestion]===i?'selected':'')+'" onclick="selectOption('+i+')"><span class="option-number">'+(i+1)+'</span><span class="option-text">'+o.text+'</span></button>').join('')+'</div><div class="nav-buttons"><button class="btn btn-secondary" onclick="prevQuestion()" '+(currentQuestion===0?'disabled':'')+'><i class="fas fa-arrow-left"></i> 上一题</button><button class="btn btn-primary" onclick="nextQuestion()" '+(answers[currentQuestion]===undefined?'disabled':'')+'>'+(currentQuestion===selectedQuestions.length-1?'查看结果 <i class="fas fa-chart-pie"></i>':'下一题 <i class="fas fa-arrow-right"></i>')+'</button></div><div class="keyboard-hint">快捷键：<kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> <kbd>4</kbd> 选择选项，<kbd>←</kbd> 上一题，<kbd>→</kbd> 下一题</div></div>';
+    updateProgress();
+}
+
+function selectOption(i){
+    answers[currentQuestion]=i;
+    saveProgress();
+    const btns=document.querySelectorAll('.option-btn');
+    btns.forEach((btn,idx)=>{btn.style.pointerEvents='none';if(idx===i)btn.classList.add('selected')});
+    setTimeout(()=>{
+        if(currentQuestion<selectedQuestions.length-1){
+            const card=document.querySelector('.question-card.active');
+            card.classList.add('sliding');
+            setTimeout(()=>{currentQuestion++;renderQuestion()},280);
+        }else{showResults()}
+    },300);
+}
+
+function prevQuestion(){
+    if(currentQuestion>0){
+        const card=document.querySelector('.question-card.active');
+        card.classList.add('sliding');
+        setTimeout(()=>{currentQuestion--;renderQuestion()},280);
+    }
+}
+
+function nextQuestion(){
+    if(answers[currentQuestion]===undefined)return;
+    if(currentQuestion<selectedQuestions.length-1){
+        const card=document.querySelector('.question-card.active');
+        card.classList.add('sliding');
+        setTimeout(()=>{currentQuestion++;renderQuestion()},280);
+    }else{showResults()}
+}
+
+function calculateScores(){
+    // 重置所有8个维度
+    scores={research:0,practical:0,business:0,social:0,technical:0,analytical:0,tcm:0,risk:0};
+    
+    answers.forEach((ai,qi)=>{
+        const o=selectedQuestions[qi].options[ai];
+        Object.keys(o.score).forEach(k=>{
+            scores[k]+=o.score[k];
+        });
+    });
+    
+    // 主维度归一化（6个）
+    const mainKeys=['research','practical','business','social','technical','analytical'];
+    const mainScores=mainKeys.map(k=>scores[k]);
+    const minMain=Math.min(...mainScores);
+    const maxMain=Math.max(...mainScores);
+    
+    if(maxMain!==minMain){
+        mainKeys.forEach(k=>{
+            scores[k]=Math.round(10+(scores[k]-minMain)/(maxMain-minMain)*90);
+        });
+    }else{
+        mainKeys.forEach(k=>{scores[k]=50;});
+    }
+    
+    // 独立轴归一化（tcm和risk）- 映射到[0, 100]，50为中点
+    ['tcm','risk'].forEach(k=>{
+        // 假设独立轴题目每题最大±2分，约3-4题，范围约[-8, +8]
+        scores[k]=Math.round(50+scores[k]*6); // 放大系数6，使范围更明显
+        scores[k]=Math.max(0,Math.min(100,scores[k])); // 限制在[0,100]
+    });
+}
+
+function euclideanDistance(v1,v2){
+    let sum=0;
+    for(let i=0;i<v1.length;i++){
+        const w=dimWeights[dimKeys[i]];
+        sum+=w*w*Math.pow(v1[i]-v2[i],2);
+    }
+    return Math.sqrt(sum);
+}
+
+function matchCareers(){
+    const userVector=dimKeys.map(k=>scores[k]/100);
+    return careers.map(c=>{
+        const dist=euclideanDistance(userVector,c.vector);
+        let match=Math.round(100*(1-dist/maxPossibleDist));
+        
+        // 考虑独立轴的影响
+        if(c.tcm!==undefined){
+            const tcmDiff=Math.abs(scores.tcm/100-c.tcm);
+            match=Math.round(match*(1-tcmDiff*0.15)); // tcm差异最多影响15%
+        }
+        if(c.risk!==undefined){
+            const riskDiff=Math.abs(scores.risk/100-c.risk);
+            match=Math.round(match*(1-riskDiff*0.15)); // risk差异最多影响15%
+        }
+        
+        return{...c,dist,match};
+    }).sort((a,b)=>b.match-a.match);
+}
+
+function showResults(){
+    document.getElementById('questionContainer').style.display='none';
+    document.getElementById('progressContainer').style.display='none';
+    document.getElementById('loadingScreen').classList.add('active');
+    clearProgress();
+    setTimeout(()=>{
+        calculateScores();
+        const matched=matchCareers();
+        renderResults(matched);
+        document.getElementById('loadingScreen').classList.remove('active');
+        document.getElementById('resultsScreen').classList.add('active');
+        createConfetti();
+        window.scrollTo({top:0,behavior:'smooth'});
+    },2000);
+}
+
+function createConfetti(){
+    const colors=['#0ea5e9','#10b981','#f59e0b','#ef4444','#8b5cf6'];
+    for(let i=0;i<50;i++){setTimeout(()=>{
+        const c=document.createElement('div');
+        c.className='confetti';
+        c.style.left=Math.random()*100+'vw';
+        c.style.backgroundColor=colors[Math.floor(Math.random()*colors.length)];
+        c.style.animationDuration=(Math.random()*2+2)+'s';
+        document.body.appendChild(c);
+        setTimeout(()=>c.remove(),4000);
+    },i*50)}
+}
+
+function renderAxisBars(){
+    // tcm轴
+    const tcmMarker=document.getElementById('tcmMarker');
+    const tcmScore=document.getElementById('tcmScore');
+    tcmMarker.style.left=scores.tcm+'%';
+    const tcmLabel=scores.tcm>=60?'偏向中医药领域':scores.tcm<=40?'偏向现代生物医药':'中立';
+    tcmScore.textContent=tcmLabel+' ('+scores.tcm+'分)';
+    
+    // risk轴
+    const riskMarker=document.getElementById('riskMarker');
+    const riskScore=document.getElementById('riskScore');
+    riskMarker.style.left=scores.risk+'%';
+    const riskLabel=scores.risk>=60?'偏好高风险高回报':scores.risk<=40?'偏好稳定可预期':'中立';
+    riskScore.textContent=riskLabel+' ('+scores.risk+'分)';
+}
+
+function renderResults(matched){
+    const sorted=Object.entries(scores).filter(([k])=>!['tcm','risk'].includes(k)).sort((a,b)=>b[1]-a[1]);
+    const top=sorted[0][0],sec=sorted[1][0];
+    const code=dimensions[top].code+dimensions[sec].code;
+    const name=dimensions[top].name+'-'+dimensions[sec].name;
+    document.getElementById('resultType').textContent=code;
+    document.getElementById('resultTitle').textContent=name;
+    document.getElementById('resultDescription').textContent='你的职业DNA以"'+dimensions[top].name+'"为主导，辅以"'+dimensions[sec].name+'"特质。'+dimensions[top].description+'同时，你也具备'+dimensions[sec].description+'的特点。';
+
+    document.getElementById('dimensionCards').innerHTML=sorted.map(([k,s],i)=>{
+        const lv=s>=70?'high':s>=40?'medium':'low';
+        const cls=i===0?'primary':i===1?'secondary':'';
+        return'<div class="dimension-card '+cls+'"><div class="dimension-header"><span class="dimension-name">'+dimensions[k].icon+' '+dimensions[k].name+'</span><span class="dimension-code">'+dimensions[k].code+'</span></div><div class="dimension-bar"><div class="dimension-fill '+lv+'" style="width:'+s+'%"></div></div><div class="dimension-score">'+s+'分</div><p class="dimension-desc">'+dimensions[k].description+'</p></div>';
+    }).join('');
+
+    // 渲染独立轴
+    renderAxisBars();
+
+    document.getElementById('careerCards').innerHTML=matched.slice(0,3).map((c,i)=>
+        '<div class="career-card '+(i===0?'best-match':'')+'"><div class="career-header"><div class="career-rank">'+(i+1)+'</div><span class="career-match-badge '+(c.match>=85?'high':'medium')+'"><i class="fas fa-star"></i> 匹配度 '+c.match+'%</span></div><h4 class="career-name">'+c.name+'</h4><div class="career-tags">'+c.tags.map(t=>'<span class="career-tag">'+t+'</span>').join('')+'</div><p class="career-description">'+c.description+'</p><div class="career-details"><div class="career-detail"><span class="career-detail-value">'+c.salary+'</span><span class="career-detail-label">参考年薪</span></div><div class="career-detail"><span class="career-detail-value">'+c.growth+'</span><span class="career-detail-label">发展节奏</span></div><div class="career-detail"><span class="career-detail-value">'+c.tags[0]+'</span><span class="career-detail-label">入行门槛</span></div></div></div>'
+    ).join('');
+}
+
+function restartAssessment(){
+    currentQuestion=0;
+    answers=[];
+    scores={research:0,practical:0,business:0,social:0,technical:0,analytical:0,tcm:0,risk:0};
+    clearProgress();
+    
+    // 关键：重新选择题目
+    selectRandomQuestions();
+    
+    document.getElementById('resultsScreen').classList.remove('active');
+    document.getElementById('welcomeScreen').style.display='block';
+    document.getElementById('progressContainer').style.display='none';
+    document.getElementById('questionContainer').style.display='block';
+    const ss=document.getElementById('saveStatus');
+    if(ss){ss.innerHTML='<i class="fas fa-info-circle"></i><span>测评进度将自动保存</span>';ss.classList.remove('saved')}
+    window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function saveResult(){
+    const code=document.getElementById('resultType').textContent,name=document.getElementById('resultTitle').textContent;
+    let r='生物医药职业决策测评报告 V6\n================================\n\n测评结果: '+code+' - '+name+'\n\n六维能力得分:\n';
+    Object.entries(scores).filter(([k])=>!['tcm','risk'].includes(k)).sort((a,b)=>b[1]-a[1]).forEach(([k,s])=>{r+='- '+dimensions[k].name+': '+s+'分\n'});
+    r+='\n偏好倾向:\n';
+    const tcmLabel=scores.tcm>=60?'偏向中医药领域':scores.tcm<=40?'偏向现代生物医药':'中立';
+    const riskLabel=scores.risk>=60?'偏好高风险高回报':scores.risk<=40?'偏好稳定可预期':'中立';
+    r+='- 中医药偏好: '+tcmLabel+' ('+scores.tcm+'分)\n';
+    r+='- 风险偏好: '+riskLabel+' ('+scores.risk+'分)\n';
+    const blob=new Blob([r],{type:'text/plain;charset=utf-8'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+    a.download='生物医药职业测评V6_'+code+'_'+new Date().toLocaleDateString()+'.txt';
+    document.body.appendChild(a);a.click();document.body.removeChild(a);
+    showToast('报告已下载！');
+}
+
+function shareResult(){
+    const code=document.getElementById('resultType').textContent,name=document.getElementById('resultTitle').textContent;
+    const txt='我在生物医药职业决策测评V6中的结果是：'+code+' - '+name+'。快来测测你的职业DNA吧！';
+    if(navigator.share){navigator.share({title:'生物医药职业决策测评V6',text:txt,url:location.href}).then(()=>showToast('分享成功！')).catch(()=>{})}
+    else{navigator.clipboard.writeText(txt+' '+location.href).then(()=>showToast('结果已复制！')).catch(()=>showToast('复制失败'))}
+}
+
+document.addEventListener('keydown',e=>{
+    const qc=document.querySelector('.question-card.active');
+    if(!qc)return;
+    if(e.key==='ArrowLeft'&&currentQuestion>0)prevQuestion();
+    else if(e.key==='ArrowRight'&&answers[currentQuestion]!==undefined)nextQuestion();
+    else if(['1','2','3','4'].includes(e.key)){const i=parseInt(e.key)-1;const opts=qc.querySelectorAll('.option-btn');if(opts[i])selectOption(i)}
+});
+
+window.onload=function(){
+    if(loadProgress()&&currentQuestion>0){
+        const ss=document.getElementById('saveStatus');
+        if(ss){ss.innerHTML='<i class="fas fa-save"></i><span>检测到第'+(currentQuestion+1)+'题进度</span>';ss.classList.add('saved')}
+    }
+};
+    </script>
+</body>
+</html>
