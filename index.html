@@ -169,6 +169,25 @@
         @keyframes confetti-fall{0%{transform:translateY(0) rotate(0);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
         .save-status{display:inline-flex;align-items:center;gap:6px;font-size:.85rem;color:var(--text-light);margin-top:15px}
         .save-status.saved{color:var(--secondary)}
+        /* 题目分布统计样式 */
+        .question-distribution{background:var(--bg);padding:20px;border-radius:16px;margin-top:20px}
+        .distribution-title{font-size:1rem;font-weight:600;color:var(--text);margin-bottom:15px;text-align:center}
+        .distribution-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+        .distribution-item{text-align:center;padding:10px;background:#fff;border-radius:10px;border:1px solid var(--border)}
+        .distribution-item.axis{background:linear-gradient(135deg,#fef3c7,#fde68a);border-color:#f59e0b}
+        .distribution-icon{font-size:1.5rem;margin-bottom:4px}
+        .distribution-label{font-size:.75rem;color:var(--text-secondary);margin-bottom:4px}
+        .distribution-value{font-size:1.2rem;font-weight:700;color:var(--primary)}
+        .distribution-item.axis .distribution-value{color:#92400e}
+        /* 调试信息样式 */
+        .debug-section{background:var(--card);padding:35px;border-radius:24px;box-shadow:var(--shadow);border:1px solid var(--border);margin-bottom:25px}
+        .debug-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+        .debug-card{background:var(--bg);padding:20px;border-radius:16px;border:1px solid var(--border)}
+        .debug-card h4{font-size:1rem;font-weight:600;color:var(--text);margin-bottom:15px;display:flex;align-items:center;gap:8px}
+        .debug-item{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dashed var(--border)}
+        .debug-item:last-child{border-bottom:none}
+        .debug-label{font-size:.85rem;color:var(--text-secondary)}
+        .debug-value{font-size:.85rem;font-weight:600;color:var(--primary);font-family:monospace}
         @media(max-width:375px){
             .container{padding:10px}
             .header{padding:30px 15px;border-radius:16px}
@@ -195,22 +214,26 @@
             .result-hero{padding:30px 15px;border-radius:16px}
             .result-badge{font-size:1.3rem;padding:10px 20px}
             .result-title{font-size:1.2rem}
-            .dimensions-section,.careers-section,.action-section,.axis-section{padding:20px 15px;border-radius:16px}
+            .dimensions-section,.careers-section,.action-section,.axis-section,.debug-section{padding:20px 15px;border-radius:16px}
             .dimension-cards{grid-template-columns:1fr;gap:12px}
             .career-details{grid-template-columns:1fr}
             .action-buttons{grid-template-columns:1fr}
             .career-card{padding:20px 15px}
             .career-name{font-size:1.1rem}
+            .distribution-grid{grid-template-columns:repeat(2,1fr)}
+            .debug-grid{grid-template-columns:1fr}
         }
         @media(max-width:768px){
             .feature-grid{grid-template-columns:1fr}
             .stats-bar{gap:20px}
+            .debug-grid{grid-template-columns:1fr}
         }
         @media print{
             .bg-animation,.header,.progress-container,.action-section,.nav-buttons,.keyboard-hint{display:none!important}
             .results-screen{display:block!important}
         }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
 </head>
 <body>
     <div class="bg-animation"></div>
@@ -236,9 +259,9 @@
         <div class="welcome-screen" id="welcomeScreen">
             <span class="welcome-badge">🎯 发现你的职业DNA</span>
             <h2>探索最适合你的生物医药职业</h2>
-            <p class="subtitle">本测评基于Holland职业兴趣理论和生物医药行业特点，从6个主维度+2个独立轴评估你的职业倾向。</p>
+            <p class="subtitle">本测评基于Holland职业兴趣理论和生物医药行业特点，从6个主维度+2个独立轴评估你的职业倾向，帮助你发现最适合的职业方向。</p>
             <div class="feature-grid">
-                <div class="feature-card"><div class="feature-icon"><i class="fas fa-flask"></i></div><h3>科学严谨</h3><p>基于RIASEC职业兴趣理论，59题题库分层抽取20题</p></div>
+                <div class="feature-card"><div class="feature-icon"><i class="fas fa-microscope"></i></div><h3>科学严谨</h3><p>基于Holland职业兴趣理论，确保测评的信度和效度</p></div>
                 <div class="feature-card"><div class="feature-icon"><i class="fas fa-chart-line"></i></div><h3>8维评估</h3><p>6主维度+2独立轴，全面评估职业倾向</p></div>
                 <div class="feature-card"><div class="feature-icon"><i class="fas fa-bullseye"></i></div><h3>情景模拟</h3><p>真实工作场景测试，了解真实职业偏好</p></div>
             </div>
@@ -298,9 +321,21 @@
                 <div class="section-header"><div class="section-icon"><i class="fas fa-bullseye"></i></div><h3 class="section-title">推荐职业方向</h3></div>
                 <div class="career-cards" id="careerCards"></div>
             </div>
+            <!-- 题目分布统计 -->
+            <div class="dimensions-section">
+                <div class="section-header"><div class="section-icon"><i class="fas fa-puzzle-piece"></i></div><h3 class="section-title">本次测评题目分布</h3></div>
+                <div class="question-distribution">
+                    <div class="distribution-grid" id="questionDistribution"></div>
+                </div>
+            </div>
+            <!-- 调试信息 -->
+            <div class="debug-section" id="debugSection">
+                <div class="section-header"><div class="section-icon"><i class="fas fa-bug"></i></div><h3 class="section-title">评分详情（调试）</h3></div>
+                <div class="debug-grid" id="debugGrid"></div>
+            </div>
             <div class="action-section">
                 <div class="action-buttons">
-                    <button class="action-btn" onclick="restartAssessment()"><i class="fas fa-redo"></i><span>重新测评</span></button>
+                    <button class="action-btn" onclick="location.reload()"><i class="fas fa-redo"></i><span>重新测评</span></button>
                     <button class="action-btn" onclick="saveResult()"><i class="fas fa-download"></i><span>保存报告</span></button>
                     <button class="action-btn" onclick="shareResult()"><i class="fas fa-share-alt"></i><span>分享结果</span></button>
                 </div>
@@ -323,341 +358,96 @@ const dimensions={
     risk:{name:'风险偏好',code:'X',description:'对职业稳定性vs高风险高回报的偏好',icon:'⚡',type:'axis'}
 };
 
-// 四选一题目库 - 全部使用偏好选择句式
-const questionBank=[
-    // ========== 研究探索型题目 ==========
-    {id:1,dimension:'research',type:'preference',text:'面对海量前沿文献，你更倾向哪种方式？',scenario:'你刚进入一个新领域，需要快速了解研究现状。',options:[
-        {text:'你更看重实用性，只精读与当前工作直接相关的文献',score:{research:0.5,practical:1}},
-        {text:'你倾向于有选择性，关注几个核心研究方向的进展',score:{research:1,analytical:0.5}},
-        {text:'你乐于广泛涉猎，主动追踪多个领域的最新突破',score:{research:1.5,analytical:0.5}},
-        {text:'你渴望全面掌握，系统性地阅读并建立完整知识图谱',score:{research:2,analytical:1}}
-    ]},
-    {id:2,dimension:'research',type:'preference',text:'当实验结果与预期相反时，你更享受哪种反应？',scenario:'你进行了数周的实验，最终数据却完全颠覆了最初的假设。',options:[
-        {text:'你倾向于检查流程，确保没有操作失误导致异常',score:{practical:1,research:0.5}},
-        {text:'你觉得有趣，愿意花时间去理解背后的原因',score:{research:1,analytical:0.5}},
-        {text:'你感到兴奋，这可能意味着隐藏的新发现',score:{research:1.5,analytical:1}},
-        {text:'你异常激动，因为这可能意味着发现了新大陆',score:{research:2,analytical:1.5}}
-    ]},
-    {id:3,dimension:'research',type:'preference',text:'选择研究课题时，你更看重什么？',scenario:'你有机会自主选择博士或硕士的研究方向。',options:[
-        {text:'你更看重顺利毕业，选择有把握完成的课题',score:{practical:1}},
-        {text:'你倾向于考虑应用价值和就业前景',score:{practical:0.5,business:0.5,research:0.5}},
-        {text:'你追求科学意义与实际应用的平衡',score:{research:1,practical:0.5}},
-        {text:'你渴望纯粹的科学探索，即使短期内看不到应用价值',score:{research:2}}
-    ]},
-    {id:4,dimension:'research',type:'preference',text:'撰写论文时，你最享受哪个环节？',scenario:'你正在完成一篇研究论文的撰写工作。',options:[
-        {text:'你更喜欢整理数据和图表，呈现清晰的实验结果',score:{analytical:1,practical:0.5}},
-        {text:'你倾向于详细描述方法，确保他人可以复现',score:{practical:1,research:0.5}},
-        {text:'你享受结果分析，从数据中提取有价值的信息',score:{research:1,analytical:1}},
-        {text:'你最爱讨论部分，阐释发现的深层科学意义',score:{research:1.5,analytical:1.5}}
-    ]},
-    {id:5,dimension:'research',type:'preference',text:'在学术交流中，你更喜欢哪种参与方式？',scenario:'你参加了本领域的年度学术会议，有多种活动可选。',options:[
-        {text:'你倾向于与熟悉的同行深入交流，建立合作关系',score:{social:1,business:0.5}},
-        {text:'你喜欢听前沿报告，了解最新科学进展',score:{research:1,analytical:0.5}},
-        {text:'你乐于参与讨论，提出自己的见解和疑问',score:{research:1.5,analytical:1}},
-        {text:'你渴望成为焦点，主动发起话题引导讨论方向',score:{research:1.5,analytical:1.5,social:0.5}}
-    ]},
-    {id:6,dimension:'research',type:'preference',text:'面对一个全新的研究领域，你的感受是？',scenario:'导师向你介绍了一个尚无人涉足的研究方向，充满未知但也意味着高风险。',options:[
-        {text:'你倾向于选择成熟稳定的研究方向，降低不确定性',score:{practical:1}},
-        {text:'你愿意尝试，但会谨慎评估风险和可行性',score:{research:0.5,analytical:0.5}},
-        {text:'你乐于接受挑战，探索新领域令你兴奋',score:{research:1.5}},
-        {text:'你渴望这样的机会，未知意味着无限可能',score:{research:2,analytical:0.5}}
-    ]},
-    
-    // ========== 应用实践型题目 ==========
-    {id:7,dimension:'practical',type:'preference',text:'面对复杂的实验操作，你的学习方式是？',scenario:'你需要掌握一项新的细胞培养或分子生物学技术。',options:[
-        {text:'你倾向于先深入阅读文献，理解透彻再动手',score:{research:1}},
-        {text:'你喜欢边看书边操作，理论与实践结合',score:{research:0.5,practical:0.5}},
-        {text:'你先看一遍示范，然后直接动手实践',score:{practical:1,technical:0.5}},
-        {text:'你更喜欢直接动手，在实践中学习和改进',score:{practical:1.5,technical:1}}
-    ]},
-    {id:8,dimension:'practical',type:'preference',text:'当实验设备出现故障时，你会怎么处理？',scenario:'关键仪器如HPLC或PCR仪突然无法正常工作。',options:[
-        {text:'你倾向于联系工程师，专业的事交给专业的人',score:{business:0.5}},
-        {text:'你会查阅手册，然后联系技术支持',score:{technical:0.5,analytical:0.5}},
-        {text:'你喜欢自己排查常见问题，尝试解决',score:{practical:0.5,technical:1}},
-        {text:'你热衷于动手修理，把这当作学习机会',score:{practical:1.5,technical:1.5}}
-    ]},
-    {id:9,dimension:'practical',type:'preference',text:'遇到设备小故障时，你会尝试自己解决吗？',scenario:'实验室设备出现常见问题的处理习惯。',options:[
-        {text:'你倾向于报修，等待专业人员处理',score:{business:0.5}},
-        {text:'简单问题你会尝试，复杂问题直接报修',score:{technical:0.5}},
-        {text:'你习惯先自己排查，解决不了再寻求帮助',score:{practical:0.5,technical:1}},
-        {text:'你喜欢自己解决问题，把故障当学习机会',score:{practical:1.5,technical:1.5}}
-    ]},
-    
-    // ========== 商业运营型题目 ==========
-    {id:10,dimension:'business',type:'preference',text:'当你听说一款新药获批上市时，你首先想到什么？',scenario:'你所在公司或关注领域的抗癌药刚刚获得NMPA批准。',options:[
-        {text:'你更关心它的科学原理和作用机制',score:{research:1}},
-        {text:'你关注它将如何改变治疗方案和患者生活',score:{social:1,research:0.5}},
-        {text:'你思考它的竞争优势和市场定位',score:{business:0.5,analytical:0.5}},
-        {text:'你立即评估它的市场潜力和商业价值',score:{business:1.5,analytical:1}}
-    ]},
-    {id:11,dimension:'business',type:'preference',text:'面对一个商业机会，你的决策依据是什么？',scenario:'你发现了一个潜在的投资或合作机会。',options:[
-        {text:'你只关注技术创新性，其他都不重要',score:{research:1}},
-        {text:'你考虑技术可行性和长期竞争力',score:{research:0.5,analytical:0.5}},
-        {text:'你平衡市场需求和盈利模式',score:{business:0.5,analytical:1}},
-        {text:'你严格评估市场需求和盈利模式的可行性',score:{business:1.5,analytical:1.5}}
-    ]},
-    {id:12,dimension:'business',type:'preference',text:'对于创业，你的态度是？',scenario:'你正在考虑毕业后的职业选择，有人提议一起创业。',options:[
-        {text:'你偏好稳定，在大平台积累经验',score:{practical:1}},
-        {text:'如果有好的机会可以考虑，但不会主动追求',score:{business:0.5}},
-        {text:'你愿意承担一定风险，追求更高回报',score:{business:1,research:0.5}},
-        {text:'你渴望创业，愿意承担风险追求梦想',score:{business:1.5,research:1}}
-    ]},
-    {id:13,dimension:'business',type:'preference',text:'制定产品策略时，你最看重什么？',scenario:'你负责一款新药或诊断产品的市场推广策略。',options:[
-        {text:'你只关注产品的临床价值和科学性',score:{research:1,social:0.5}},
-        {text:'你优先考虑患者获益和临床需求',score:{social:1,research:0.5}},
-        {text:'你平衡市场定位和竞争策略',score:{business:0.5,analytical:1}},
-        {text:'你追求精准的市场定位和差异化竞争策略',score:{business:1.5,analytical:1.5}}
-    ]},
-    {id:14,dimension:'business',type:'preference',text:'你会关注医药行业的商业动态吗？',scenario:'平时的信息获取习惯。',options:[
-        {text:'你只关注学术内容，对商业不感兴趣',score:{research:0.5}},
-        {text:'看到相关新闻你会浏览一下',score:{business:0.5}},
-        {text:'你主动关注行业动态，了解市场趋势',score:{business:1,analytical:0.5}},
-        {text:'你每天必看行业资讯，深入分析商业模式',score:{business:1.5,analytical:1}}
-    ]},
-    {id:15,dimension:'business',type:'preference',text:'在团队讨论中，你会提出商业角度的观点吗？',scenario:'项目讨论会议中的发言习惯。',options:[
-        {text:'你只从技术或科学角度发言',score:{research:0.5}},
-        {text:'涉及资源或成本时你会提及',score:{business:0.5,practical:0.5}},
-        {text:'你主动考虑可行性、成本和市场因素',score:{business:1,practical:0.5}},
-        {text:'你习惯性从商业价值角度思考问题',score:{business:1.5,analytical:0.5}}
-    ]},
-    
-    // ========== 人际互动型题目 ==========
-    {id:16,dimension:'social',type:'preference',text:'当同事遇到困难向你求助时，你会怎么做？',scenario:'一位同事在实验设计或数据分析上遇到了瓶颈。',options:[
-        {text:'你建议他自己查资料解决，不想被打扰',score:{research:0.5}},
-        {text:'你分析问题，提供具体解决方案',score:{analytical:1,practical:1}},
-        {text:'你耐心倾听，给予情感支持和鼓励',score:{social:1,research:0.5}},
-        {text:'你不仅帮助解决问题，还会持续关心进展',score:{social:1.5,practical:0.5}}
-    ]},
-    {id:17,dimension:'social',type:'preference',text:'在社交场合中，你通常怎么做？',scenario:'你参加了一个行业交流晚宴或学术聚会。',options:[
-        {text:'你尽量避免社交活动，觉得耗费精力',score:{research:0.5}},
-        {text:'你与熟悉的人深入交流，不主动结识新人',score:{research:0.5}},
-        {text:'你乐于结识新朋友，拓展人脉圈',score:{social:1,business:0.5}},
-        {text:'你主动与陌生人交流，享受建立新联系',score:{social:1.5,business:1}}
-    ]},
-    {id:18,dimension:'social',type:'preference',text:'你更愿意在哪种环境中工作？',scenario:'想象你的理想工作场景。',options:[
-        {text:'你偏好完全独立工作，避免与人互动',score:{research:1,analytical:0.5}},
-        {text:'你偶尔需要沟通，但大部分时间独立工作',score:{research:0.5,analytical:0.5}},
-        {text:'你喜欢团队协作，需要频繁的人际互动',score:{social:1,business:0.5}},
-        {text:'你偏好高度社交化的环境，与人打交道是主要工作',score:{social:1.5,business:1}}
-    ]},
-    {id:19,dimension:'social',type:'preference',text:'培训新人时，你的方式是？',scenario:'你需要指导一位刚入职的实习生或新同事。',options:[
-        {text:'你提供资料让其自学，不占用自己时间',score:{research:0.5}},
-        {text:'你系统讲解知识点，让其理解原理',score:{research:1,practical:0.5}},
-        {text:'你手把手教，边做边讲，注重实践',score:{social:1,practical:1}},
-        {text:'你不仅教技能，还关心其职业发展和心理状态',score:{social:1.5,practical:0.5}}
-    ]},
-    {id:20,dimension:'social',type:'preference',text:'你会主动与同事交流工作或生活吗？',scenario:'日常工作中的社交互动频率。',options:[
-        {text:'除了工作必要沟通，你不主动交流',score:{research:0.5}},
-        {text:'你与熟悉的同事会聊聊天',score:{social:0.5}},
-        {text:'你乐于与同事交流，建立良好关系',score:{social:1,business:0.5}},
-        {text:'你主动关心他人，是团队中的活跃分子',score:{social:1.5,business:0.5}}
-    ]},
-    {id:21,dimension:'social',type:'preference',text:'在会议或讨论中，你会主动发言吗？',scenario:'团队会议或学术讨论中的表现。',options:[
-        {text:'你尽量保持沉默，听别人说',score:{analytical:0.5}},
-        {text:'你被问到或有重要观点时才会发言',score:{research:0.5}},
-        {text:'你积极参与讨论，分享自己的想法',score:{social:1,research:0.5}},
-        {text:'你主动引导讨论，善于激发团队思考',score:{social:1.5,business:0.5}}
-    ]},
-    {id:22,dimension:'social',type:'preference',text:'你会主动帮助新同事适应环境吗？',scenario:'团队中有新人加入时的表现。',options:[
-        {text:'你忙于自己的工作，无暇顾及他人',score:{business:0.5}},
-        {text:'被问到时你会提供帮助',score:{social:0.5}},
-        {text:'你主动关心新人，分享经验和资源',score:{social:1,practical:0.5}},
-        {text:'你像导师一样，全方位帮助新人成长',score:{social:1.5,practical:1}}
-    ]},
-    
-    // ========== 技术工程型题目 ==========
-    {id:23,dimension:'technical',type:'preference',text:'面对一台复杂的仪器设备，你会怎么做？',scenario:'实验室新到了一台从未用过的质谱仪或测序仪。',options:[
-        {text:'你等待厂家培训，不想自己摸索',score:{business:0.5}},
-        {text:'你先阅读原理文献，理解透彻再操作',score:{research:1}},
-        {text:'你先看操作手册，然后尝试上手',score:{technical:0.5,practical:0.5}},
-        {text:'你直接动手摸索，在实践中掌握',score:{technical:1.5,practical:1}}
-    ]},
-    {id:24,dimension:'technical',type:'preference',text:'对于编程和自动化，你的态度是？',scenario:'实验室正在推进数字化转型，需要学习编程工具。',options:[
-        {text:'你对此没有兴趣，手动操作更可靠',score:{practical:0.5}},
-        {text:'你愿意学习，只要能提高效率即可',score:{practical:0.5}},
-        {text:'你主动学习Python等编程语言',score:{analytical:0.5,technical:1}},
-        {text:'你热衷于开发自动化工具，享受编程过程',score:{analytical:1,technical:1.5}}
-    ]},
-    {id:25,dimension:'technical',type:'preference',text:'工艺开发中，你最享受什么？',scenario:'你正在优化一个药物的生产工艺或实验流程。',options:[
-        {text:'你只关注最终能否成功，过程不重要',score:{}},
-        {text:'你分析数据，建立预测模型',score:{analytical:1}},
-        {text:'你调试参数，找到最佳条件',score:{technical:0.5,practical:0.5}},
-        {text:'你深入研究原理，从根本上优化工艺',score:{technical:1.5,research:0.5}}
-    ]},
-    {id:26,dimension:'technical',type:'preference',text:'遇到技术难题时，你的解决思路是？',scenario:'设备反复出现同样故障，常规方法无法解决。',options:[
-        {text:'你直接更换设备或寻求外部帮助',score:{business:0.5}},
-        {text:'你尝试不同方法，找到可行的临时方案',score:{practical:1}},
-        {text:'你深入研究原理，寻找根本解决方案',score:{research:0.5,technical:1}},
-        {text:'你彻底拆解分析，从根本上理解并解决问题',score:{research:1,technical:1.5}}
-    ]},
-    {id:27,dimension:'technical',type:'preference',text:'你会主动学习新的实验技术或软件工具吗？',scenario:'面对新技术的学习态度。',options:[
-        {text:'你掌握现有技能就够了，不想学新的',score:{practical:0.5}},
-        {text:'工作需要时你才会学习',score:{practical:0.5}},
-        {text:'你主动学习新工具，提升工作效率',score:{technical:1,analytical:0.5}},
-        {text:'你热衷于尝试新技术，保持技术敏感度',score:{technical:1.5,analytical:1}}
-    ]},
-    
-    // ========== 数据分析型题目 ==========
-    {id:28,dimension:'analytical',type:'preference',text:'面对一堆实验数据，你的第一反应是？',scenario:'你完成了一批实验，获得大量原始数据需要处理。',options:[
-        {text:'你感到头疼，希望有人帮忙处理',score:{social:0.5}},
-        {text:'你按部就班地整理和清洗数据',score:{practical:1}},
-        {text:'你兴奋，可以从中发现有趣规律',score:{analytical:0.5,research:0.5}},
-        {text:'你迫不及待地想要挖掘数据背后的故事',score:{analytical:1.5,research:1}}
-    ]},
-    {id:29,dimension:'analytical',type:'preference',text:'对于统计学和机器学习，你的态度是？',scenario:'需要为毕业论文或项目选择数据分析方法。',options:[
-        {text:'你觉得过于复杂，能用简单方法就不用复杂的',score:{practical:0.5}},
-        {text:'够用就行，你专注于生物学问题本身',score:{research:1}},
-        {text:'你非常感兴趣，主动深入学习',score:{analytical:0.5,technical:0.5}},
-        {text:'你热衷于探索新算法，享受建模过程',score:{analytical:1.5,technical:1}}
-    ]},
-    {id:30,dimension:'analytical',type:'preference',text:'做决策时，你更依赖什么？',scenario:'需要为团队选择技术方案或研究方向。',options:[
-        {text:'你依赖直觉和经验，快速做决定',score:{business:0.5}},
-        {text:'你参考团队共识和专家意见',score:{social:1,business:0.5}},
-        {text:'你结合数据和经验，综合判断',score:{analytical:0.5,practical:0.5}},
-        {text:'你严格的数据分析，量化评估对比',score:{analytical:1.5}}
-    ]},
-    {id:31,dimension:'analytical',type:'preference',text:'你会对实验数据进行深入分析吗？',scenario:'获得实验数据后的处理习惯。',options:[
-        {text:'你只看主要结果，不深究细节',score:{practical:0.5}},
-        {text:'你发现异常时才会深入分析',score:{analytical:0.5,research:0.5}},
-        {text:'你系统分析数据，寻找潜在规律',score:{analytical:1,research:0.5}},
-        {text:'你深度挖掘数据，多角度验证结论',score:{analytical:1.5,research:1}}
-    ]},
-    {id:32,dimension:'analytical',type:'preference',text:'你会使用数据可视化工具呈现结果吗？',scenario:'准备报告或论文时的习惯。',options:[
-        {text:'简单的表格就够了',score:{}},
-        {text:'必要时你制作基础图表',score:{analytical:0.5}},
-        {text:'你注重图表质量，让数据更直观',score:{analytical:1,business:0.5}},
-        {text:'你精心设计可视化，追求最佳呈现效果',score:{analytical:1.5,business:1}}
-    ]},
-    {id:33,dimension:'analytical',type:'preference',text:'你会记录和复盘自己的工作和学习吗？',scenario:'个人成长和工作总结的习惯。',options:[
-        {text:'你做完就结束，不回顾总结',score:{}},
-        {text:'重要项目结束后你会简单总结',score:{analytical:0.5}},
-        {text:'你定期复盘，记录经验教训',score:{analytical:1,practical:0.5}},
-        {text:'你系统记录，建立个人知识管理体系',score:{analytical:1.5,research:0.5}}
-    ]},
-    
-    // ========== 情景选择题 ==========
-    {id:34,dimension:'research',type:'preference',text:'实习期间，导师给你两个任务选择，你更倾向于？',scenario:'一个任务是整理实验室的历史数据，进行回顾性分析；另一个是参与新项目的客户沟通和需求调研。',options:[
-        {text:'你毫不犹豫选择数据分析，可以安静地研究数据规律',score:{research:1,analytical:1.5}},
-        {text:'你倾向于数据分析，但也会考虑客户沟通的价值',score:{research:0.5,analytical:1}},
-        {text:'你倾向于客户沟通，可以了解实际需求',score:{business:0.5,social:0.5}},
-        {text:'你毫不犹豫选择客户沟通，喜欢与人交流互动',score:{business:1,social:1.5}}
-    ]},
-    {id:35,dimension:'research',type:'preference',text:'毕业论文选题时，你更偏好哪种方向？',scenario:'导师给了两个选题方向：一个是探索某基因功能的纯学术研究，另一个是开发一种可产业化的检测方法。',options:[
-        {text:'你坚定选择学术研究，探索未知更有意义',score:{research:1.5}},
-        {text:'你倾向于学术研究，但也会考虑应用前景',score:{research:1,practical:0.5}},
-        {text:'你倾向于产业应用，能产生实际价值',score:{practical:1,business:0.5}},
-        {text:'你坚定选择产业应用，解决实际问题更重要',score:{practical:1.5,business:1}}
-    ]},
-    {id:36,dimension:'analytical',type:'preference',text:'在项目执行过程中，你最喜欢哪个环节？',scenario:'一个完整的研发项目包括：实验设计、实验操作、数据分析和报告撰写。',options:[
-        {text:'你最喜欢数据分析，从数据中发现规律最有成就感',score:{analytical:1.5,research:0.5}},
-        {text:'你倾向于数据分析，但也享受实验操作',score:{analytical:1,practical:0.5}},
-        {text:'你倾向于实验操作，动手实践更有实感',score:{practical:1,technical:0.5}},
-        {text:'你最喜欢实验操作，亲手完成实验过程很满足',score:{practical:1.5,technical:1}}
-    ]},
-    {id:37,dimension:'research',type:'preference',text:'你更愿意参与哪种类型的项目？',scenario:'一个是可以独立完成的科研项目，另一个是需要跨部门协作的大型项目。',options:[
-        {text:'你更喜欢独立科研，可以专注深入研究',score:{research:1.5,analytical:0.5}},
-        {text:'你倾向于独立科研，但也能接受协作',score:{research:1}},
-        {text:'你倾向于跨部门协作，可以学习不同领域',score:{social:0.5,business:0.5}},
-        {text:'你更喜欢跨部门协作，多元视角更有价值',score:{social:1,business:1}}
-    ]},
-    {id:38,dimension:'research',type:'preference',text:'你更适应哪种工作节奏？',scenario:'一种是需要深度思考、长期专注的研究工作；另一种是快节奏、多线并行的项目管理工作。',options:[
-        {text:'你更适应深度思考，沉浸式工作更有成就感',score:{research:1.5,analytical:1}},
-        {text:'你倾向于深度思考，但也能适应快节奏',score:{research:1,analytical:0.5}},
-        {text:'你倾向于快节奏，多任务并行更有挑战',score:{business:0.5,practical:0.5}},
-        {text:'你更适应快节奏多线并行，喜欢变化和挑战',score:{business:1,social:0.5}}
-    ]},
-    {id:39,dimension:'social',type:'preference',text:'项目结题时，你更偏好哪种展示方式？',scenario:'可以提交详细的技术报告，或者在大会上做演讲展示。',options:[
-        {text:'你更偏好技术报告，可以详细阐述技术细节',score:{analytical:1,technical:0.5}},
-        {text:'你倾向于技术报告，但也能接受演讲',score:{analytical:0.5}},
-        {text:'你倾向于演讲展示，可以与听众互动',score:{social:0.5,business:0.5}},
-        {text:'你更偏好演讲展示，享受舞台和影响力',score:{social:1.5,business:1}}
-    ]},
-    {id:40,dimension:'research',type:'preference',text:'工作中，你的成就感主要来自？',scenario:'一种是在学术上有所发现，发表高水平论文；另一种是参与的产品成功上市，产生商业价值。',options:[
-        {text:'学术发现带来的成就感更大',score:{research:1.5,analytical:1}},
-        {text:'你倾向于学术成就，但商业价值也重要',score:{research:1,business:0.5}},
-        {text:'你倾向于产品上市，能看到实际影响',score:{business:0.5,practical:0.5}},
-        {text:'产品上市带来的成就感更大',score:{business:1.5,practical:1}}
-    ]},
-    {id:41,dimension:'technical',type:'preference',text:'如果要学习一项新技能，你更倾向于？',scenario:'可以选择深入学习编程和AI工具，或者精进传统实验技能。',options:[
-        {text:'你坚定选择编程/AI，这是未来趋势',score:{technical:1.5,analytical:1.5}},
-        {text:'你倾向于编程/AI，但实验技能也重要',score:{technical:1,analytical:1}},
-        {text:'你倾向于实验技能，动手能力是基础',score:{practical:1,technical:0.5}},
-        {text:'你坚定选择实验技能，这是核心竞争力',score:{practical:1.5,technical:0.5}}
-    ]},
-    
-    // ========== 独立轴题目：中医药偏好 ==========
-    {id:42,axis:'tcm',type:'preference',text:'学校开设了《中医药基础理论》选修课，你的态度是？',scenario:'这门课介绍中医的基本理论、中药药理和现代化研究进展。',options:[
-        {text:'你不感兴趣，更想学习现代分子生物学课程',score:{tcm:-2}},
-        {text:'你可能会选，但优先考虑其他课程',score:{tcm:-1}},
-        {text:'你会认真考虑，中医药有独特价值',score:{tcm:1,practical:0.5}},
-        {text:'你非常感兴趣，主动学习中医药知识',score:{tcm:2,research:0.5}}
-    ]},
-    {id:43,axis:'tcm',type:'preference',text:'对于中医药理论，你的看法是？',scenario:'中医药有着数千年的理论和实践积累。',options:[
-        {text:'你觉得缺乏科学依据，更信任现代医学',score:{tcm:-2}},
-        {text:'你持保留态度，需要更多现代研究验证',score:{tcm:-1,research:0.5}},
-        {text:'你认为有一定价值，值得学习和研究',score:{tcm:1,practical:0.5}},
-        {text:'你觉得博大精深，蕴含独特的智慧体系',score:{tcm:2,research:0.5}}
-    ]},
-    {id:44,axis:'tcm',type:'preference',text:'对于"中医药现代化"这个方向，你的态度是？',scenario:'近年来国家大力推动中医药现代化研究。',options:[
-        {text:'你不太看好，现代医学已经足够先进',score:{tcm:-2}},
-        {text:'你持观望态度，看具体研究方向',score:{tcm:-1,analytical:0.5}},
-        {text:'你支持，这是传承与创新结合的方向',score:{tcm:1,business:0.5}},
-        {text:'你非常看好，愿意投身这个领域',score:{tcm:2,research:1,business:0.5}}
-    ]},
-    {id:45,axis:'tcm',type:'preference',text:'如果有机会参与新药研发，你更倾向于？',scenario:'可以选择现代小分子药物研发，或者中药新药研发。',options:[
-        {text:'你坚定选择现代药物研发，技术路线更清晰',score:{tcm:-2,technical:1}},
-        {text:'你倾向于现代药物，但中药研发也有价值',score:{tcm:-1,technical:0.5}},
-        {text:'你对中药研发有兴趣，有独特优势',score:{tcm:1,practical:0.5}},
-        {text:'你更倾向于中药研发，传承中有创新',score:{tcm:2,research:0.5,practical:0.5}}
-    ]},
-    {id:46,axis:'tcm',type:'preference',text:'对于中药材的质量标准和药理研究，你的兴趣程度？',scenario:'中药材的标准化和现代化是行业重要方向。',options:[
-        {text:'你不太感兴趣，更关注合成药物',score:{tcm:-2}},
-        {text:'你有一定兴趣，但不是优先方向',score:{tcm:-1}},
-        {text:'你比较感兴趣，这是有价值的方向',score:{tcm:1,analytical:0.5}},
-        {text:'你非常感兴趣，愿意深入研究',score:{tcm:2,research:1,analytical:0.5}}
-    ]},
-    
-    // ========== 独立轴题目：风险偏好 ==========
-    {id:47,axis:'risk',type:'preference',text:'毕业时你收到两个offer，你会选择？',scenario:'A是知名药企的研发岗，稳定有保障；B是初创生物技术公司的核心研发，有期权但风险高。',options:[
-        {text:'你毫不犹豫选择大药企，稳定发展更重要',score:{risk:-2,practical:0.5}},
-        {text:'你倾向于大药企，但也会考虑创业公司的潜力',score:{risk:-1}},
-        {text:'你倾向于创业公司，有机会快速成长',score:{risk:1,business:0.5}},
-        {text:'你毫不犹豫选择创业公司，高风险高回报更刺激',score:{risk:2,business:1}}
-    ]},
-    {id:48,axis:'risk',type:'preference',text:'对于职业发展，你的态度是？',scenario:'一种路径是稳定晋升，收入可预期；另一种是可能跳跃式发展，但也可能遇到挫折。',options:[
-        {text:'你偏好稳定路径，可预期的发展更安心',score:{risk:-2,practical:0.5}},
-        {text:'你倾向于稳定，但也会把握机会',score:{risk:-1}},
-        {text:'你愿意承担一定风险，追求更大发展',score:{risk:1,business:0.5}},
-        {text:'你偏好高风险高回报，人生需要挑战',score:{risk:2,business:1}}
-    ]},
-    {id:49,axis:'risk',type:'preference',text:'如果有机会加入创业团队，你的态度是？',scenario:'一个朋友邀请你加入他的生物医药创业项目。',options:[
-        {text:'你不会考虑，稳定工作更重要',score:{risk:-2,practical:0.5}},
-        {text:'你会谨慎评估，风险承受能力有限',score:{risk:-1,analytical:0.5}},
-        {text:'你有兴趣，会认真考虑项目前景',score:{risk:1,business:0.5}},
-        {text:'你非常感兴趣，创业是实现梦想的机会',score:{risk:2,business:1}}
-    ]},
-    {id:50,axis:'risk',type:'preference',text:'在职业选择上，你更看重什么？',scenario:'面临职业决策时，稳定性和发展潜力往往需要权衡。',options:[
-        {text:'你更看重稳定性，避免不必要的风险',score:{risk:-2,practical:1}},
-        {text:'你倾向于稳定，但也会考虑成长空间',score:{risk:-1}},
-        {text:'你倾向于发展潜力，愿意承担一定风险',score:{risk:1,research:0.5}},
-        {text:'你觉得高风险高回报更有吸引力，人生需要冒险',score:{risk:2,business:1}}
-    ]},
-    {id:51,axis:'risk',type:'preference',text:'对于职业投资（如出国深造、转行），你的态度是？',scenario:'这些选择可能带来更大发展，但也意味着不确定性和成本。',options:[
-        {text:'你倾向于在现有轨道上稳定积累',score:{risk:-2,practical:0.5}},
-        {text:'你会考虑，但需要充分评估风险',score:{risk:-1,analytical:0.5}},
-        {text:'你愿意尝试，投资自己值得冒险',score:{risk:1,research:0.5}},
-        {text:'你积极寻求突破，不惧怕不确定性',score:{risk:2,business:0.5}}
-    ]},
-    {id:52,axis:'risk',type:'preference',text:'想象十年后的自己，你更希望成为？',scenario:'一个是在某个细分领域有深厚造诣的专家；另一个是成功创业的企业家。',options:[
-        {text:'你希望成为领域专家，深度比广度更重要',score:{risk:-2,research:1.5,analytical:0.5}},
-        {text:'你倾向于专家路线，但也会关注机会',score:{risk:-1,research:1}},
-        {text:'你倾向于创业，创造更大影响力',score:{risk:1,business:1}},
-        {text:'你希望成为创业者，建立自己的事业',score:{risk:2,business:1.5}}
-    ]}
-];
+// 单字母维度代码 → 全拼映射（题库使用单字母，内部使用全拼）
+const dimMap={
+    R:'research',P:'practical',B:'business',S:'social',T:'technical',A:'analytical',C:'tcm',X:'risk',
+    r:'research',p:'practical',b:'business',s:'social',t:'technical',a:'analytical',c:'tcm',x:'risk'
+};
+function resolveDim(code){return dimMap[code]||code.toLowerCase();}
 
-// 职业数组 - 添加tcm和risk偏好值
-const careers=[
+// 辅助函数：计算题目的期望得分
+function calculateExpectations(options) {
+    const expectations = {};
+    const dimSet = new Set();
+    
+    // 收集所有涉及的维度
+    options.forEach(opt => {
+        Object.keys(opt.score).forEach(dim => dimSet.add(dim));
+    });
+    
+    // 计算每个维度的平均值
+    dimSet.forEach(dim => {
+        let sum = 0;
+        options.forEach(opt => {
+            sum += (opt.score[dim] || 0);
+        });
+        const avg = sum / 4; // 4个选项
+        if (avg !== 0) {
+            expectations[dim] = Math.round(avg * 1000) / 1000; // 保留3位小数
+        }
+    });
+    
+    return expectations;
+}
+
+// 四选一题目库 - 全部使用偏好选择句式（带expectations预计算）
+const questionBank=[
+    {id:1,dimension:'r',axis:'a',type:'preference',text:'实验结果完全颠覆了你的假设，你的第一反应是？',scenario:'你进行了数周的实验，最终数据与预期完全相反。',options:[{"text":"兴奋地深挖数据，用统计方法验证这个反常结果是否真实可靠","score":{"R": 2.0, "A": 2.0}},{"text":"觉得有趣，花时间查文献理解背后的生物学机制","score":{"R": 2.0, "A": -1.0}},{"text":"先用数据分析工具排查是否存在系统误差或批次效应","score":{"R": -1.0, "A": 2.0}},{"text":"检查实验操作流程，确认没有人为失误后再联系导师","score":{"R": -1.0, "A": -1.0}}],expectations:{"A": 0.5, "R": 0.5}},
+    {id:2,dimension:'r',axis:'b',type:'preference',text:'选择硕士/博士研究课题时，你更看重什么？',scenario:'导师给了两个方向：探索未知的基础科学问题，或与企业合作的应用研究。',options:[{"text":"纯粹的科学探索，即使短期看不到应用价值，发现新规律本身就有意义","score":{"R": 2.0, "B": -2.0}},{"text":"有科学深度、同时能产生专利或商业价值的交叉研究","score":{"R": 1.0, "B": 1.0}},{"text":"能快速产出成果、顺利毕业，应用价值和就业前景是优先考量","score":{"R": -1.0, "B": 1.0}},{"text":"企业合作项目，解决实际问题，毕业后直接对接产业需求","score":{"R": -2.0, "B": 2.0}}],expectations:{"R": 0.0, "B": 0.5}},
+    {id:3,dimension:'r',axis:'s',type:'preference',text:'实习时主管让你从两个任务中选一个，你会选？',scenario:'任务一：整理历史数据做回顾性分析；任务二：参与新项目的客户需求调研。',options:[{"text":"数据分析，可以安静深入地研究数据规律，不受外界打扰","score":{"R": 2.0, "S": -2.0}},{"text":"数据分析，但主动约几位临床医生访谈，让分析结论更有说服力","score":{"R": 1.0, "S": 1.0}},{"text":"客户调研，通过与不同背景的人交流来理解真实需求","score":{"R": -1.0, "S": 2.0}},{"text":"客户调研，喜欢与人互动，数据分析可以交给更擅长的同事","score":{"R": -2.0, "S": 2.0}}],expectations:{"S": 0.75, "R": 0.0}},
+    {id:4,dimension:'r',axis:'b',type:'preference',text:'毕业论文选题，你更倾向于哪个方向？',scenario:'导师给了两个选题：探索某基因功能的纯学术研究，或开发一种可产业化的检测方法。',options:[{"text":"基因功能研究，探索未知更有意义，发表高水平论文是目标","score":{"R": 2.0, "B": -2.0}},{"text":"基因功能研究，但会关注其潜在的诊断或治疗应用价值","score":{"R": 1.0, "B": 1.0}},{"text":"检测方法开发，能产生实际价值，也有机会申请专利","score":{"R": -1.0, "B": 2.0}},{"text":"检测方法开发，解决实际问题比发论文更重要","score":{"R": -2.0, "B": 2.0}}],expectations:{"R": 0.0, "B": 0.75}},
+    {id:5,dimension:'p',axis:'t',type:'preference',text:'需要掌握一项新的实验技术，你的学习方式是？',scenario:'实验室引进了新的单细胞测序技术，你需要在两周内掌握。',options:[{"text":"直接动手操作，在实践中摸索，遇到问题再查手册","score":{"P": 2.0, "T": 1.0}},{"text":"先看一遍操作视频，然后动手，同时记录每步参数便于优化","score":{"P": 1.0, "T": 2.0}},{"text":"先深入阅读原理文献，理解透彻后再动手，确保不走弯路","score":{"P": -1.0, "T": -1.0}},{"text":"请厂家工程师来培训，跟着他们操作一遍，之后再自己练习","score":{"P": -1.0, "T": -2.0}}],expectations:{"T": 0.0, "P": 0.25}},
+    {id:6,dimension:'p',axis:'a',type:'preference',text:'一个完整研发项目中，你最享受哪个环节？',scenario:'项目包括：实验设计、实验操作、数据分析、报告撰写四个阶段。',options:[{"text":"实验操作，亲手完成每一步，看到实验结果出来最有成就感","score":{"P": 2.0, "A": -2.0}},{"text":"实验设计，既要考虑操作可行性，又要设计合理的对照和统计方案","score":{"P": 1.0, "A": 1.0}},{"text":"数据分析，从原始数据中挖掘规律，发现隐藏的生物学意义","score":{"P": -1.0, "A": 2.0}},{"text":"报告撰写，将所有发现整合成逻辑清晰的故事，说服审稿人","score":{"P": -2.0, "A": 1.0}}],expectations:{"A": 0.5, "P": 0.0}},
+    {id:7,dimension:'b',axis:'r',type:'preference',text:'听说竞争对手的新药刚获NMPA批准，你的第一反应是？',scenario:'你所在公司的竞品刚刚获批上市，这对你们的在研项目影响重大。',options:[{"text":"立刻查阅该药的临床试验数据，分析其作用机制和安全性特征","score":{"B": -1.0, "R": 2.0}},{"text":"研究其注册路径和临床设计，评估对我方项目的监管策略影响","score":{"B": 1.0, "R": 1.0}},{"text":"分析市场定价、医保准入策略和销售渠道，评估竞争格局","score":{"B": 2.0, "R": -1.0}},{"text":"评估对公司股价和融资计划的影响，考虑是否需要调整商业策略","score":{"B": 2.0, "R": -2.0}}],expectations:{"R": 0.0, "B": 1.0}},
+    {id:8,dimension:'b',axis:'s',type:'preference',text:'负责一款新药的市场推广策略，你最看重什么？',scenario:'你是市场部负责人，需要为一款即将上市的创新药制定推广方案。',options:[{"text":"精准的市场定位和差异化竞争策略，用数据说话","score":{"B": 2.0, "S": -1.0}},{"text":"建立KOL网络，通过学术推广影响临床医生的处方习惯","score":{"B": 1.0, "S": 2.0}},{"text":"深入了解患者需求，设计以患者为中心的教育和支持项目","score":{"B": -1.0, "S": 2.0}},{"text":"优先确保产品的临床价值被充分认可，商业化是水到渠成的事","score":{"B": -2.0, "S": -1.0}}],expectations:{"S": 0.5, "B": 0.0}},
+    {id:9,dimension:'b',axis:'x',type:'preference',text:'对于创业，你的真实态度是？',scenario:'你有一个生物医药创业想法，需要辞职全职投入，前景不确定但赛道火热。',options:[{"text":"非常感兴趣，愿意承担高风险，创业是实现商业理想的最佳路径","score":{"B": 2.0, "X": 2.0}},{"text":"有兴趣，但会先在大公司积累资源和人脉，时机成熟再创业","score":{"B": 1.0, "X": -1.0}},{"text":"更愿意加入早期创业公司做核心成员，而非自己当创始人","score":{"B": -1.0, "X": 1.0}},{"text":"偏好在成熟平台稳定发展，创业的不确定性让我不安","score":{"B": -2.0, "X": -2.0}}],expectations:{"X": 0.0, "B": 0.0}},
+    {id:10,dimension:'s',axis:'p',type:'preference',text:'同事在实验设计上遇到瓶颈向你求助，你会怎么做？',scenario:'一位同事的实验结果重复性很差，他来找你讨论可能的原因。',options:[{"text":"坐下来一起分析，手把手帮他排查每个实验步骤的潜在问题","score":{"S": 2.0, "P": 2.0}},{"text":"耐心倾听他的描述，给予情感支持，帮他理清思路","score":{"S": 2.0, "P": -1.0}},{"text":"分析问题，提供具体的技术解决方案，让他自己去执行","score":{"S": -1.0, "P": 1.0}},{"text":"建议他自己查文献或找导师，不想被打扰自己的工作节奏","score":{"S": -2.0, "P": -2.0}}],expectations:{"S": 0.25, "P": 0.0}},
+    {id:11,dimension:'s',axis:'r',type:'preference',text:'你更喜欢哪种工作环境？',scenario:'想象你理想中的日常工作状态。',options:[{"text":"与临床医生、患者频繁互动，在沟通中理解真实需求","score":{"S": 2.0, "R": -1.0}},{"text":"在跨学科团队中协作，既有深度讨论又有独立研究时间","score":{"S": 1.0, "R": 1.0}},{"text":"大部分时间独立工作，偶尔与同事交流进展","score":{"S": -1.0, "R": 1.0}},{"text":"完全独立工作，深度专注，不受外界打扰","score":{"S": -2.0, "R": 2.0}}],expectations:{"S": 0.0, "R": 0.75}},
+    {id:12,dimension:'s',axis:'b',type:'preference',text:'在跨部门项目中，你更倾向于扮演什么角色？',scenario:'你参与一个需要研发、注册、市场、医学事务协作的新药上市项目。',options:[{"text":"项目协调人，负责推动各部门沟通，确保项目按时推进","score":{"S": 2.0, "B": 1.0}},{"text":"医学/科学代表，在跨部门讨论中提供专业支持","score":{"S": 1.0, "B": -1.0}},{"text":"策略制定者，专注于商业决策和资源分配","score":{"S": -1.0, "B": 2.0}},{"text":"技术专家，专注于自己负责的模块，减少跨部门协调","score":{"S": -2.0, "B": -1.0}}],expectations:{"S": 0.0, "B": 0.25}},
+    {id:13,dimension:'t',axis:'r',type:'preference',text:'实验室新到一台质谱仪，你会怎么对待它？',scenario:'这台仪器价值500万，你是第一个使用者，没有人教过你。',options:[{"text":"直接动手摸索，在实践中掌握，把每次报错当作学习机会","score":{"T": 2.0, "R": -1.0}},{"text":"先阅读仪器原理文献，理解透彻后再操作，同时记录参数优化过程","score":{"T": 1.0, "R": 2.0}},{"text":"先看操作手册，然后尝试上手，遇到问题查手册或联系厂家","score":{"T": 1.0, "R": -1.0}},{"text":"等待厂家培训，专业的事交给专业的人，不想自己摸索","score":{"T": -2.0, "R": -2.0}}],expectations:{"T": 0.5, "R": -0.5}},
+    {id:14,dimension:'t',axis:'a',type:'preference',text:'实验室推进数字化转型，需要学习编程工具，你的态度是？',scenario:'部门要求所有人学习Python用于数据处理，你有两个月时间。',options:[{"text":"热衷于开发自动化分析工具，享受编程解决问题的过程","score":{"T": 2.0, "A": 2.0}},{"text":"主动学习，目标是用代码替代重复性操作，提高实验效率","score":{"T": 2.0, "A": 1.0}},{"text":"愿意学，但更关注如何用Python做统计分析和可视化","score":{"T": -1.0, "A": 2.0}},{"text":"手动操作更可靠，编程容易出错，不太感兴趣","score":{"T": -2.0, "A": -2.0}}],expectations:{"A": 0.75, "T": 0.25}},
+    {id:15,dimension:'t',axis:'a',type:'preference',text:'如果要学习一项新技能提升竞争力，你更倾向于？',scenario:'你有三个月的自由学习时间，可以选择深入学习编程/AI，或精进传统实验技能。',options:[{"text":"深入学习机器学习和生物信息学，掌握AI辅助药物设计工具","score":{"T": 1.0, "A": 2.0}},{"text":"学习仪器开发或自动化实验平台搭建，成为硬件+软件复合型人才","score":{"T": 2.0, "A": 1.0}},{"text":"精进细胞治疗或基因编辑等前沿实验技术，成为技术专家","score":{"T": 1.0, "A": -2.0}},{"text":"系统学习GMP/GCP规范操作，为进入药企生产或临床研究做准备","score":{"T": -1.0, "A": -2.0}}],expectations:{"A": -0.25, "T": 0.75}},
+    {id:16,dimension:'a',axis:'r',type:'preference',text:'拿到一批RNA-seq数据，你的第一反应是？',scenario:'你完成了一批RNA-seq实验，获得了大量原始测序数据。',options:[{"text":"迫不及待地跑差异分析，从数据中挖掘有趣的生物学故事","score":{"A": 2.0, "R": 2.0}},{"text":"先做质控和标准化，确保数据可靠，再进行下游分析","score":{"A": 2.0, "R": -1.0}},{"text":"感到有些头疼，希望有生信同事帮忙处理，自己专注于实验验证","score":{"A": -2.0, "R": -1.0}},{"text":"按照文献中的标准流程处理，不做额外的探索性分析","score":{"A": -1.0, "R": -2.0}}],expectations:{"A": 0.25, "R": -0.5}},
+    {id:17,dimension:'a',axis:'s',type:'preference',text:'团队需要为一个项目做决策，你更倾向于哪种方式？',scenario:'你们需要决定是否推进一个新的适应症研究，有多种决策方式可选。',options:[{"text":"收集所有相关数据，建立量化评估模型，用数据驱动决策","score":{"A": 2.0, "S": -1.0}},{"text":"组织跨部门讨论，综合数据分析和各方专业意见","score":{"A": 1.0, "S": 2.0}},{"text":"广泛征求临床医生和患者的意见，以需求为导向","score":{"A": -1.0, "S": 2.0}},{"text":"依赖资深专家的经验判断，快速做决定","score":{"A": -2.0, "S": -1.0}}],expectations:{"A": 0.0, "S": 0.5}},
+    {id:18,dimension:'a',axis:'t',type:'preference',text:'获得实验数据后，你的分析习惯是？',scenario:'你完成了一组药效学实验，需要处理和分析数据。',options:[{"text":"深度挖掘数据，用多种统计方法从不同角度验证结论","score":{"A": 2.0, "T": 1.0}},{"text":"用编程工具自动化处理，建立可复用的分析流程","score":{"A": 1.0, "T": 2.0}},{"text":"按照标准统计方法处理，得出主要结论即可","score":{"A": -1.0, "T": -1.0}},{"text":"只看主要结果，不深究细节，把时间留给下一个实验","score":{"A": -2.0, "T": -2.0}}],expectations:{"A": 0.0, "T": 0.0}},
+    {id:19,dimension:'c',axis:'r',type:'preference',text:'学校开设中医药基础理论选修课，你的态度是？',scenario:'这门课介绍中医基本理论、中药药理和现代化研究进展，与你的专业课冲突不大。',options:[{"text":"非常感兴趣，主动选修，希望深入理解中医药的理论体系","score":{"C": 2.0, "R": 1.0}},{"text":"有兴趣，会选修，但更关注中药的现代药理研究而非传统理论","score":{"C": 1.0, "R": 2.0}},{"text":"可能会选，但优先考虑分子生物学、基因组学等现代课程","score":{"C": -1.0, "R": 1.0}},{"text":"不感兴趣，更想把时间用在学习前沿生物技术上","score":{"C": -2.0, "R": -1.0}}],expectations:{"C": 0.0, "R": 0.75}},
+    {id:20,dimension:'c',axis:'t',type:'preference',text:'如果有机会参与新药研发，你更倾向于哪个方向？',scenario:'你可以选择加入现代小分子药物研发团队，或中药新药研发团队。',options:[{"text":"中药新药研发，从传统方剂中挖掘活性成分，传承中有创新","score":{"C": 2.0, "T": -1.0}},{"text":"中药现代化研究，用高通量筛选和结构生物学解析中药作用机制","score":{"C": 1.0, "T": 2.0}},{"text":"现代小分子药物，技术路线清晰，有成熟的研发体系可以参考","score":{"C": -1.0, "T": 1.0}},{"text":"基因治疗或细胞治疗，代表最前沿的技术方向","score":{"C": -2.0, "T": 2.0}}],expectations:{"C": 0.0, "T": 1.0}},
+    {id:21,dimension:'x',axis:'b',type:'preference',text:'毕业时收到两个offer，你会选择？',scenario:'A：知名三甲医院科研岗，月薪1.2万，有编制；B：AI制药初创公司，月薪1.5万加期权，前景不确定。',options:[{"text":"毫不犹豫选医院，稳定发展、有编制，这是最优选择","score":{"X": -2.0, "B": -2.0}},{"text":"选医院，但会持续关注行业动态，时机合适再考虑转型","score":{"X": -1.0, "B": 1.0}},{"text":"选初创公司，高风险高回报，期权可能带来更大收益","score":{"X": 1.0, "B": 2.0}},{"text":"毫不犹豫选初创公司，创业公司的成长速度和学习机会无可替代","score":{"X": 2.0, "B": 2.0}}],expectations:{"X": 0.0, "B": 0.75}},
+    {id:22,dimension:'x',axis:'r',type:'preference',text:'展望十年后，你更希望自己的职业状态是？',scenario:'想象你35岁时的职业状态，哪个场景最让你心动？',options:[{"text":"成为某细分领域的权威学者，在顶刊发表系列论文，培养研究生","score":{"X": -2.0, "R": 2.0}},{"text":"在大型药企担任研发总监，主导多个管线项目，收入稳定丰厚","score":{"X": -1.0, "R": -1.0}},{"text":"创办了一家生物医药公司，完成B轮融资，团队50人","score":{"X": 2.0, "R": -1.0}},{"text":"在医疗健康VC担任合伙人，投资了多家创新药企","score":{"X": 1.0, "R": -2.0}}],expectations:{"R": -0.5, "X": 0.0}},
+    {id:23,dimension:'r',axis:'b',type:'preference',text:'面对一个全新的、尚无人涉足的研究方向，你的感受是？',scenario:'导师向你介绍了一个充满未知的前沿方向，可能颠覆现有认知，但风险极高。',options:[{"text":"异常兴奋，未知意味着无限可能，愿意全力投入探索","score":{"R": 2.0, "B": -2.0}},{"text":"感兴趣，但会先评估商业化潜力，再决定是否投入","score":{"R": 1.0, "B": 1.0}},{"text":"谨慎观望，等待其他团队验证可行性后再考虑跟进","score":{"R": -1.0, "B": -1.0}},{"text":"倾向于选择成熟稳定的方向，降低不确定性，确保顺利毕业","score":{"R": -2.0, "B": -1.0}}],expectations:{"R": 0.0, "B": -0.75}},
+    {id:24,dimension:'r',axis:'s',type:'preference',text:'参加本领域年度学术会议，你最享受哪个环节？',scenario:'你参加了一个为期三天的国际学术会议，有多种活动可选。',options:[{"text":"听前沿报告，了解最新科学进展，独自思考其中的科学意义","score":{"R": 2.0, "S": -2.0}},{"text":"参与学术讨论，提出自己的见解，与同行碰撞思想","score":{"R": 1.0, "S": 1.0}},{"text":"与不同机构的研究者建立合作关系，拓展科研网络","score":{"R": -1.0, "S": 2.0}},{"text":"参加企业赞助的晚宴和社交活动，了解产业动态和就业机会","score":{"R": -2.0, "S": 1.0}}],expectations:{"S": 0.5, "R": 0.0}},
+    {id:25,dimension:'r',axis:'a',type:'preference',text:'收到审稿人对你论文的负面意见，你的反应是？',scenario:'你的论文被顶刊拒稿，审稿人指出了几个重要的科学问题。',options:[{"text":"仔细分析每条意见，用数据和统计方法逐一反驳或验证","score":{"R": 2.0, "A": 2.0}},{"text":"深入思考审稿人的科学逻辑，判断是否需要补充实验","score":{"R": 2.0, "A": -1.0}},{"text":"整理数据，看看现有结果能否支撑修改后的论点","score":{"R": -1.0, "A": 2.0}},{"text":"感到沮丧，先投低一档的期刊，避免再次被拒","score":{"R": -2.0, "A": -2.0}}],expectations:{"A": 0.25, "R": 0.25}},
+    {id:26,dimension:'p',axis:'t',type:'preference',text:'实验室轮转时，你更希望被分配到哪个组？',scenario:'你有机会在两个实验室各轮转三个月，需要提前选择。',options:[{"text":"动物实验组，每天做手术、取样、处理组织，动手机会多","score":{"P": 2.0, "T": -1.0}},{"text":"仪器开发组，搭建自动化实验平台，将实验操作工程化","score":{"P": 1.0, "T": 2.0}},{"text":"生信分析组，处理大规模组学数据，开发分析流程","score":{"P": -2.0, "T": 1.0}},{"text":"文献综述组，系统梳理领域进展，为后续研究奠定理论基础","score":{"P": -2.0, "T": -2.0}}],expectations:{"T": 0.0, "P": -0.25}},
+    {id:27,dimension:'p',axis:'s',type:'preference',text:'实验操作中出现了一个意外失误，你会怎么处理？',scenario:'你在进行关键实验时，发现加错了一个试剂，可能影响整批结果。',options:[{"text":"立刻告诉导师和团队，一起分析影响范围，决定是否重做","score":{"P": 1.0, "S": 2.0}},{"text":"先自己分析失误的影响，确认严重性后再决定是否上报","score":{"P": 2.0, "S": -1.0}},{"text":"查阅文献，看看类似失误是否有补救方案","score":{"P": -1.0, "S": -1.0}},{"text":"记录下来，继续实验，等结果出来再判断是否有影响","score":{"P": -1.0, "S": -2.0}}],expectations:{"S": -0.5, "P": 0.25}},
+    {id:28,dimension:'p',axis:'a',type:'preference',text:'毕业设计的形式，你更倾向于哪种？',scenario:'你可以选择以实验操作为主的课题，或以数据分析为主的课题。',options:[{"text":"实验操作为主，亲手做细胞实验、动物实验，数据来自自己的双手","score":{"P": 2.0, "A": -2.0}},{"text":"实验+分析结合，自己做实验，也自己分析数据，全流程掌控","score":{"P": 1.0, "A": 1.0}},{"text":"数据分析为主，利用公共数据库或合作方数据，专注于计算分析","score":{"P": -2.0, "A": 2.0}},{"text":"文献综述+建模，不做实验，通过系统综述和数学建模回答科学问题","score":{"P": -2.0, "A": 1.0}}],expectations:{"A": 0.5, "P": -0.25}},
+    {id:29,dimension:'p',axis:'t',type:'preference',text:'对GMP洁净车间的生产操作，你的态度是？',scenario:'你有机会去药企的生物制品生产车间实习，需要穿防护服、严格按SOP操作。',options:[{"text":"非常感兴趣，想亲身体验工业化生产的每个环节","score":{"P": 2.0, "T": 1.0}},{"text":"感兴趣，尤其想了解工艺参数如何影响产品质量","score":{"P": 1.0, "T": 2.0}},{"text":"可以接受，但更希望参与工艺开发而非重复性生产操作","score":{"P": -1.0, "T": 1.0}},{"text":"不太感兴趣，重复性操作太枯燥，更喜欢有创造性的工作","score":{"P": -2.0, "T": -1.0}}],expectations:{"T": 0.75, "P": 0.0}},
+    {id:30,dimension:'b',axis:'a',type:'preference',text:'参与医保谈判准备工作，你最感兴趣的部分是？',scenario:'你的公司正在准备一款创新药的医保准入谈判，需要多方面准备。',options:[{"text":"构建药物经济学模型，用数据证明产品的成本效益优势","score":{"B": 2.0, "A": 2.0}},{"text":"分析竞品的医保谈判策略，制定差异化的定价方案","score":{"B": 2.0, "A": 1.0}},{"text":"整理临床试验数据，撰写支持医保准入的证据包","score":{"B": -1.0, "A": 1.0}},{"text":"研究疾病负担和患者需求，为谈判提供人文关怀角度的支持","score":{"B": -2.0, "A": -1.0}}],expectations:{"A": 0.75, "B": 0.25}},
+    {id:31,dimension:'b',axis:'s',type:'preference',text:'对于License-in/out（药物授权引进/转让）交易，你的兴趣是？',scenario:'BD（商务拓展）工作的核心是识别有价值的药物资产并完成交易谈判。',options:[{"text":"非常感兴趣，喜欢评估资产价值、谈判条款、推动交易落地","score":{"B": 2.0, "S": 2.0}},{"text":"感兴趣，尤其是评估技术可行性和市场潜力的部分","score":{"B": 2.0, "S": -1.0}},{"text":"有一定兴趣，但更喜欢在交易完成后负责项目推进","score":{"B": -1.0, "S": 1.0}},{"text":"不太感兴趣，更喜欢专注于科学研究而非商业谈判","score":{"B": -2.0, "S": -2.0}}],expectations:{"S": 0.0, "B": 0.25}},
+    {id:32,dimension:'b',axis:'r',type:'preference',text:'你会主动关注医药行业的商业动态吗？',scenario:'平时的信息获取习惯，以及你对行业商业信息的关注程度。',options:[{"text":"每天必看行业资讯，深入分析商业模式和竞争格局","score":{"B": 2.0, "R": -1.0}},{"text":"主动关注行业动态，同时也追踪最新的科学研究进展","score":{"B": 1.0, "R": 1.0}},{"text":"主要关注学术进展，偶尔浏览行业新闻","score":{"B": -1.0, "R": 2.0}},{"text":"只关注学术内容，对商业动态不感兴趣","score":{"B": -2.0, "R": 1.0}}],expectations:{"R": 0.75, "B": 0.0}},
+    {id:33,dimension:'b',axis:'s',type:'preference',text:'制定年度销售目标时，你更看重哪个维度？',scenario:'你是一款新药的产品经理，需要制定下一年度的销售策略。',options:[{"text":"精准的市场细分和竞争定位，用数据驱动目标设定","score":{"B": 2.0, "S": -1.0}},{"text":"与销售团队和KOL深度沟通，基于一线反馈制定可执行的目标","score":{"B": 1.0, "S": 2.0}},{"text":"以患者可及性为核心，优先考虑如何让更多患者用上药","score":{"B": -1.0, "S": 1.0}},{"text":"参考历史数据和行业基准，保守设定可完成的目标","score":{"B": -2.0, "S": -1.0}}],expectations:{"S": 0.25, "B": 0.0}},
+    {id:34,dimension:'s',axis:'r',type:'preference',text:'与临床医生沟通，你更享受哪种场景？',scenario:'你的工作需要与临床医生保持密切联系，有多种互动方式。',options:[{"text":"在学术研讨会上与医生深入讨论最新研究数据，碰撞科学思想","score":{"S": 1.0, "R": 2.0}},{"text":"定期拜访医生，了解临床需求，建立长期信任关系","score":{"S": 2.0, "R": -1.0}},{"text":"通过数据分析报告向医生展示产品价值，用证据说话","score":{"S": -1.0, "R": 1.0}},{"text":"尽量减少与医生的直接接触，通过书面材料传递信息","score":{"S": -2.0, "R": -1.0}}],expectations:{"S": 0.0, "R": 0.25}},
+    {id:35,dimension:'s',axis:'p',type:'preference',text:'团队出现意见分歧时，你通常怎么处理？',scenario:'你的团队在实验方案上产生了严重分歧，影响项目推进。',options:[{"text":"主动组织讨论，倾听各方意见，推动团队达成共识","score":{"S": 2.0, "P": -1.0}},{"text":"提出具体的折中方案，用实验数据验证哪种方法更可行","score":{"S": 1.0, "P": 2.0}},{"text":"坚持自己认为正确的方案，用逻辑和数据说服他人","score":{"S": -1.0, "P": 1.0}},{"text":"避免冲突，服从多数意见，把精力放在执行上","score":{"S": -1.0, "P": -1.0}}],expectations:{"S": 0.25, "P": 0.25}},
+    {id:36,dimension:'s',axis:'b',type:'preference',text:'对于KOL（关键意见领袖）管理工作，你的态度是？',scenario:'医学事务部门的核心工作之一是维护与顶级临床专家的关系。',options:[{"text":"非常感兴趣，喜欢与顶级专家建立深度合作，推动学术影响力","score":{"S": 2.0, "B": 1.0}},{"text":"感兴趣，尤其是通过KOL网络推动产品的学术推广","score":{"S": 1.0, "B": 2.0}},{"text":"可以接受，但更喜欢专注于数据分析和证据生成","score":{"S": -1.0, "B": -1.0}},{"text":"不太感兴趣，频繁的社交活动让我感到疲惫","score":{"S": -2.0, "B": -2.0}}],expectations:{"S": 0.0, "B": 0.0}},
+    {id:37,dimension:'s',axis:'a',type:'preference',text:'项目结题时，你更偏好哪种成果展示方式？',scenario:'你可以提交详细的技术报告，或在部门大会上做演讲展示。',options:[{"text":"演讲展示，享受与听众互动，用故事和可视化传递核心发现","score":{"S": 2.0, "A": -1.0}},{"text":"演讲+报告结合，演讲传递亮点，报告支撑细节","score":{"S": 1.0, "A": 1.0}},{"text":"详细的技术报告，可以完整呈现方法和数据，逻辑严密","score":{"S": -1.0, "A": 2.0}},{"text":"简短的数据摘要，把时间留给下一个项目","score":{"S": -2.0, "A": -1.0}}],expectations:{"S": 0.0, "A": 0.25}},
+    {id:38,dimension:'t',axis:'p',type:'preference',text:'对医疗器械硬件开发，你的兴趣程度是？',scenario:'医疗器械工程师需要设计和开发从传感器到手术机器人的各类硬件。',options:[{"text":"非常感兴趣，喜欢从电路设计到系统集成的全流程硬件开发","score":{"T": 2.0, "P": 2.0}},{"text":"感兴趣，尤其是将实验室原型转化为可量产的工程产品","score":{"T": 2.0, "P": 1.0}},{"text":"有一定兴趣，但更喜欢软件和算法层面的开发","score":{"T": 1.0, "P": -1.0}},{"text":"不太感兴趣，更喜欢生物学实验而非工程开发","score":{"T": -2.0, "P": -1.0}}],expectations:{"T": 0.75, "P": 0.25}},
+    {id:39,dimension:'t',axis:'a',type:'preference',text:'遇到软件bug或分析流程报错，你的处理方式是？',scenario:'你在运行一个生信分析流程时，遇到了一个难以定位的错误。',options:[{"text":"系统地排查代码，用调试工具逐步定位问题，享受解决bug的过程","score":{"T": 2.0, "A": 2.0}},{"text":"查看报错信息，搜索Stack Overflow，找到解决方案后理解原理","score":{"T": 1.0, "A": 1.0}},{"text":"换一个现成的工具或流程，避免在debug上花太多时间","score":{"T": -1.0, "A": -1.0}},{"text":"请技术同事帮忙，自己专注于生物学问题的解读","score":{"T": -2.0, "A": -2.0}}],expectations:{"A": 0.0, "T": 0.0}},
+    {id:40,dimension:'t',axis:'a',type:'preference',text:'对自动化实验平台（如液体处理机器人、高通量筛选系统），你的态度是？',scenario:'你的实验室正在考虑引进自动化设备，需要有人负责开发和维护。',options:[{"text":"非常感兴趣，愿意负责平台搭建、编程和数据分析全流程","score":{"T": 2.0, "A": 2.0}},{"text":"感兴趣，尤其是如何用自动化提升实验通量和数据质量","score":{"T": 2.0, "A": 1.0}},{"text":"可以使用，但不想负责维护和开发，专注于实验设计","score":{"T": -1.0, "A": -1.0}},{"text":"不太感兴趣，手动实验更灵活，自动化设备太复杂","score":{"T": -2.0, "A": -2.0}}],expectations:{"A": 0.0, "T": 0.25}},
+    {id:41,dimension:'t',axis:'r',type:'preference',text:'工艺放大中遇到批次失败，你的解决思路是？',scenario:'你负责将一个实验室工艺放大到中试规模，连续两批产品质量不达标。',options:[{"text":"深入研究工艺原理，从理论上找出放大失败的根本原因","score":{"T": 1.0, "R": 2.0}},{"text":"系统设计DOE实验，用数据找出关键工艺参数","score":{"T": 2.0, "R": 1.0}},{"text":"参考文献中类似工艺的放大经验，尝试调整关键参数","score":{"T": 1.0, "R": -1.0}},{"text":"联系设备供应商和工艺专家，借助外部经验快速解决","score":{"T": -1.0, "R": -2.0}}],expectations:{"T": 0.75, "R": 0.0}},
+    {id:42,dimension:'a',axis:'t',type:'preference',text:'对生物信息学分析流程，你的态度是？',scenario:'生信分析需要掌握Linux命令行、Python/R编程和各类生信工具。',options:[{"text":"非常感兴趣，愿意深入学习并开发自己的分析流程","score":{"A": 2.0, "T": 2.0}},{"text":"感兴趣，主要用于分析自己的实验数据，不需要开发新工具","score":{"A": 2.0, "T": -1.0}},{"text":"可以使用现成工具，但不想深入学习编程","score":{"A": -1.0, "T": -1.0}},{"text":"不感兴趣，更喜欢湿实验，数据分析交给专业人员","score":{"A": -2.0, "T": -2.0}}],expectations:{"A": 0.25, "T": -0.5}},
+    {id:43,dimension:'a',axis:'p',type:'preference',text:'临床试验数据出现异常值，你会怎么处理？',scenario:'你负责一项III期临床试验的数据管理，发现某中心的数据存在明显异常。',options:[{"text":"深入分析异常数据的模式，用统计方法判断是否为系统性偏差","score":{"A": 2.0, "P": -1.0}},{"text":"立刻联系该中心的CRC，核查原始记录，确认是否存在操作问题","score":{"A": 1.0, "P": 2.0}},{"text":"按照预设的数据清洗规则处理，标记异常值后继续分析","score":{"A": -1.0, "P": 1.0}},{"text":"上报给数据安全监察委员会，等待专家决策","score":{"A": -2.0, "P": -1.0}}],expectations:{"A": 0.0, "P": 0.25}},
+    {id:44,dimension:'a',axis:'b',type:'preference',text:'对真实世界数据（RWD）研究，你的兴趣是？',scenario:'RWD研究利用电子病历、医保数据等真实临床数据评估药物效果。',options:[{"text":"非常感兴趣，喜欢从海量真实数据中挖掘临床证据","score":{"A": 2.0, "B": -1.0}},{"text":"感兴趣，尤其是RWD在医保准入和市场准入中的应用","score":{"A": 1.0, "B": 2.0}},{"text":"有一定兴趣，但更偏好随机对照试验的严格设计","score":{"A": -1.0, "B": -1.0}},{"text":"不太感兴趣，更喜欢基础研究而非流行病学分析","score":{"A": -2.0, "B": -2.0}}],expectations:{"A": 0.0, "B": -0.5}},
+    {id:45,dimension:'a',axis:'s',type:'preference',text:'用数据支持决策时，你更倾向于哪种方式？',scenario:'你需要向管理层汇报一个重要的研发决策建议。',options:[{"text":"构建详细的量化模型，用数字和图表说话，让数据自己说话","score":{"A": 2.0, "S": -1.0}},{"text":"数据+故事结合，用数据支撑，用案例和类比让非专业人士理解","score":{"A": 1.0, "S": 2.0}},{"text":"以沟通为主，数据作为辅助，重点是理解听众的关切","score":{"A": -1.0, "S": 2.0}},{"text":"依赖经验和直觉，数据太多反而会让决策者困惑","score":{"A": -2.0, "S": -1.0}}],expectations:{"A": 0.0, "S": 0.5}},
+    {id:46,dimension:'c',axis:'r',type:'preference',text:'对中药药理研究和化学合成药研究，你更倾向于哪个？',scenario:'你可以选择加入中药活性成分研究组，或化学合成小分子药物研究组。',options:[{"text":"中药药理研究，从天然产物中发现新的活性成分，充满探索乐趣","score":{"C": 2.0, "R": 2.0}},{"text":"中药研究，但侧重用现代化学和生物学方法解析其作用机制","score":{"C": 1.0, "R": 1.0}},{"text":"化学合成药研究，靶点明确，结构-活性关系清晰","score":{"C": -1.0, "R": 1.0}},{"text":"化学合成药研究，技术路线成熟，更容易产出可转化的成果","score":{"C": -2.0, "R": -1.0}}],expectations:{"C": 0.0, "R": 0.75}},
+    {id:47,dimension:'c',axis:'p',type:'preference',text:'参观中药材种植基地和现代化药厂，你更期待哪个？',scenario:'学校组织了两个参观活动，你只能选一个。',options:[{"text":"中药材种植基地，想亲手采摘道地药材，感受中医药的自然根源","score":{"C": 2.0, "P": 2.0}},{"text":"中药材基地，想了解药材质量如何影响最终药效","score":{"C": 1.0, "P": 1.0}},{"text":"现代化药厂，想了解GMP生产流程和质量控制体系","score":{"C": -1.0, "P": 2.0}},{"text":"现代化药厂，想看最先进的自动化生产设备和工艺技术","score":{"C": -2.0, "P": 1.0}}],expectations:{"C": 0.0, "P": 1.5}},
+    {id:48,dimension:'c',axis:'s',type:'preference',text:'对中西医结合临床研究，你的态度是？',scenario:'中西医结合研究需要与中医师和西医师密切合作，设计临床试验。',options:[{"text":"非常感兴趣，愿意深入学习中医理论，与中医师建立合作","score":{"C": 2.0, "S": 2.0}},{"text":"感兴趣，尤其是用现代临床研究方法验证中医疗效","score":{"C": 1.0, "S": 1.0}},{"text":"可以接受，但更倾向于纯西医的循证医学研究","score":{"C": -1.0, "S": -1.0}},{"text":"不太感兴趣，中西医结合的研究设计太复杂","score":{"C": -2.0, "S": -2.0}}],expectations:{"S": 0.0, "C": 0.0}},
+    {id:49,dimension:'c',axis:'b',type:'preference',text:'对中医药国际化推广工作，你的兴趣是？',scenario:'中医药国际化需要将中医药产品推向海外市场，应对不同国家的监管要求。',options:[{"text":"非常感兴趣，愿意推动中医药走向世界，这是文化使命","score":{"C": 2.0, "B": 2.0}},{"text":"感兴趣，尤其是如何在海外市场定位和推广中医药产品","score":{"C": 1.0, "B": 2.0}},{"text":"有一定兴趣，但更关注国内市场的中医药发展","score":{"C": 1.0, "B": -1.0}},{"text":"不太感兴趣，更倾向于推广现代医药产品","score":{"C": -2.0, "B": 1.0}}],expectations:{"C": 0.5, "B": 1.0}},
+    {id:50,dimension:'c',axis:'a',type:'preference',text:'对中药质量标准化研究，你的态度是？',scenario:'中药质量标准化是中医药现代化的核心挑战，需要建立科学的质量评价体系。',options:[{"text":"非常感兴趣，愿意用现代分析技术建立中药的质量标准","score":{"C": 2.0, "A": 2.0}},{"text":"感兴趣，尤其是多成分定量分析和指纹图谱技术","score":{"C": 1.0, "A": 2.0}},{"text":"可以接受，但更喜欢研究中药的药效而非质量控制","score":{"C": 1.0, "A": -1.0}},{"text":"不太感兴趣，质量控制工作太重复，缺乏创新性","score":{"C": -1.0, "A": -2.0}}],expectations:{"A": 0.25, "C": 0.75}},
+    {id:51,dimension:'x',axis:'s',type:'preference',text:'面对两个offer，你会选择？',scenario:'A：大型跨国药企的稳定岗位，团队成熟，晋升路径清晰；B：本土创新药企的核心岗位，团队年轻，需要独当一面。',options:[{"text":"毫不犹豫选跨国药企，成熟体系和国际化平台更有价值","score":{"X": -2.0, "S": -1.0}},{"text":"选跨国药企，但会主动争取更多跨部门协作机会","score":{"X": -1.0, "S": 1.0}},{"text":"选本土创新药企，喜欢在小团队中承担更多责任","score":{"X": 1.0, "S": 2.0}},{"text":"毫不犹豫选本土创新药企，挑战和成长机会更重要","score":{"X": 2.0, "S": 1.0}}],expectations:{"S": 0.75, "X": 0.0}},
+    {id:52,dimension:'x',axis:'r',type:'preference',text:'职业发展遇到瓶颈时，你更倾向于哪种应对方式？',scenario:'你在现有岗位工作三年，感到成长停滞，面临职业选择。',options:[{"text":"深耕现有领域，成为不可替代的专家，等待晋升机会","score":{"X": -2.0, "R": 2.0}},{"text":"在现有公司内部转岗，拓展技能边界","score":{"X": -1.0, "R": -1.0}},{"text":"跳槽到更有挑战性的岗位，即使薪资暂时不变","score":{"X": 1.0, "R": 1.0}},{"text":"考虑转行或创业，彻底改变职业轨迹","score":{"X": 2.0, "R": -1.0}}],expectations:{"R": 0.25, "X": 0.0}},
+    {id:53,dimension:'x',axis:'b',type:'preference',text:'对出国深造（读博或博后）的机会，你的态度是？',scenario:'你收到了一所海外顶尖大学的博士录取通知，需要放弃国内的工作机会。',options:[{"text":"毫不犹豫接受，海外顶尖平台的科研训练无可替代","score":{"X": 2.0, "B": -2.0}},{"text":"认真考虑，但会评估回国后的就业前景和商业机会","score":{"X": 1.0, "B": 1.0}},{"text":"谨慎评估，更倾向于留在国内积累产业经验","score":{"X": -1.0, "B": 1.0}},{"text":"不考虑，国内的发展机会已经足够好","score":{"X": -2.0, "B": -1.0}}],expectations:{"X": 0.0, "B": -0.25}},
+    {id:54,dimension:'x',axis:'p',type:'preference',text:'参与新药首次人体试验（FIH）研究，你的态度是？',scenario:'FIH研究是新药临床开发的第一步，存在未知风险，但也是最前沿的临床研究。',options:[{"text":"非常感兴趣，愿意参与最前沿的临床研究，接受未知挑战","score":{"X": 2.0, "P": 1.0}},{"text":"感兴趣，尤其是FIH的剂量爬坡设计和安全性监测","score":{"X": 1.0, "P": 2.0}},{"text":"可以接受，但更倾向于参与已有安全性数据的后期临床试验","score":{"X": -1.0, "P": 1.0}},{"text":"不太感兴趣，风险太高，更喜欢稳定的研究工作","score":{"X": -2.0, "P": -1.0}}],expectations:{"P": 0.75, "X": 0.0}},
+    {id:55,dimension:'x',axis:'s',type:'preference',text:'对自由职业/独立顾问的职业模式，你的态度是？',scenario:'一些资深医药专家选择成为独立顾问，收入不稳定但自由度高。',options:[{"text":"非常向往，愿意用稳定性换取自由度和更高的时薪","score":{"X": 2.0, "S": -1.0}},{"text":"有兴趣，尤其是可以同时服务多个客户，建立广泛的行业网络","score":{"X": 1.0, "S": 2.0}},{"text":"可以考虑，但需要先在机构内积累足够的资历和人脉","score":{"X": -1.0, "S": 1.0}},{"text":"不感兴趣，稳定的组织归属感对我很重要","score":{"X": -2.0, "S": -1.0}}],expectations:{"S": 0.25, "X": 0.0}}
+];const careers=[
     {name:'学术PI/博士后',vector:[0.85,0.25,0.15,0.2,0.35,0.45],tcm:0.3,risk:0.2,tags:['博士优先','学术道路','基础研究'],description:'在高校或科研院所从事独立研究，探索科学前沿问题。',salary:'15-40万',growth:'慢但稳'},
     {name:'医药史研究者',vector:[0.75,0.2,0.1,0.35,0.15,0.3],tcm:0.5,risk:0.2,tags:['博士优先','人文交叉','学术岗位'],description:'研究医药发展历史，挖掘传统智慧。',salary:'12-25万',growth:'稳定'},
     {name:'科学传播作家',vector:[0.6,0.3,0.2,0.7,0.15,0.35],tcm:0.4,risk:0.3,tags:['本科可入行','内容创作','新媒体'],description:'将复杂医学知识转化为公众可理解的内容。',salary:'12-30万',growth:'中等'},
@@ -699,33 +489,104 @@ const careers=[
 ];
 
 const dimKeys=['research','practical','business','social','technical','analytical'];
-const dimWeights={research:1.1,practical:1.0,business:1.0,social:1.0,technical:1.0,analytical:1.1};
-// 最大加权距离: sqrt(sum(w^2)) = sqrt(1.21+1+1+1+1+1.21) = sqrt(6.42) ≈ 2.533
-const maxPossibleDist=Math.sqrt(1.21+1+1+1+1+1.21);
+// 移除维度权重，使用无权重欧氏距离
+// const dimWeights={research:1.1,practical:1.0,business:1.0,social:1.0,technical:1.0,analytical:1.1};
+// 最大距离: sqrt(6个维度) = sqrt(6) ≈ 2.449
+const maxPossibleDist=Math.sqrt(6);
 
 let selectedQuestions=[],currentQuestion=0,answers=[],scores={research:0,practical:0,business:0,social:0,technical:0,analytical:0,tcm:0,risk:0};
 
 function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 
-// 分层随机抽取题目，确保独立轴题目均衡分布
+// ============================================
+// 分层配额抽样算法
+// ============================================
 function selectRandomQuestions() {
-    // 分离独立轴题目和常规题目
-    const axisQuestions = questionBank.filter(q => q.axis);
-    const regularQuestions = questionBank.filter(q => !q.axis);
+    // 新题库数据结构：
+    // dimension: 'r','p','b','s','t','a','c','x' (小写单字母)
+    // axis: 'a','b','s','t','r','p','x' (小写单字母，配对维度)
+    //   'c' = 中医药为主维度, 'x' = 风险为主维度
+    // 注意：新题库没有独立的轴题目，所有题目都是主维度题目
     
-    // 确保每个独立轴至少抽到2题，最多3题
-    const tcmQuestions = shuffle(axisQuestions.filter(q => q.axis === 'tcm')).slice(0, 2);
-    const riskQuestions = shuffle(axisQuestions.filter(q => q.axis === 'risk')).slice(0, 2);
+    // 按主维度分组
+    const dimensionQuestions = {
+        research: questionBank.filter(q => q.dimension === 'r'),
+        practical: questionBank.filter(q => q.dimension === 'p'),
+        business: questionBank.filter(q => q.dimension === 'b'),
+        social: questionBank.filter(q => q.dimension === 's'),
+        technical: questionBank.filter(q => q.dimension === 't'),
+        analytical: questionBank.filter(q => q.dimension === 'a'),
+        tcm: questionBank.filter(q => q.dimension === 'c'),
+        risk: questionBank.filter(q => q.dimension === 'x')
+    };
     
-    // 剩余题目从常规题目中抽取
-    const remainingCount = 20 - tcmQuestions.length - riskQuestions.length;
-    const selectedRegular = shuffle(regularQuestions).slice(0, remainingCount);
+    selectedQuestions = [];
     
-    // 合并并打乱顺序
-    selectedQuestions = shuffle([...tcmQuestions, ...riskQuestions, ...selectedRegular]);
+    // 抽取主维度题目（每维2题，共16题）
+    const dimKeys = Object.keys(dimensionQuestions);
+    const dimQuota = {};
     
-    // 保存选中的题目到localStorage
-    localStorage.setItem('biocareer_v6_questions',JSON.stringify(selectedQuestions));
+    // 先给每维分配2题基础配额
+    dimKeys.forEach(key => {
+        dimQuota[key] = 2;
+    });
+    
+    // 剩余4题按维度题目池大小比例分配
+    const remainingSlots = 4;
+    const totalPoolSize = dimKeys.reduce((sum, key) => sum + dimensionQuestions[key].length, 0);
+    
+    dimKeys.forEach(key => {
+        const poolSize = dimensionQuestions[key].length;
+        const extraQuota = Math.round((poolSize / totalPoolSize) * remainingSlots);
+        dimQuota[key] += extraQuota;
+    });
+    
+    // 调整确保总数正好是20题
+    let currentTotal = Object.values(dimQuota).reduce((a, b) => a + b, 0);
+    let safety = 0;
+    while (currentTotal > 20 && safety < 100) {
+        const randomDim = dimKeys[Math.floor(Math.random() * dimKeys.length)];
+        if (dimQuota[randomDim] > 2) {
+            dimQuota[randomDim]--;
+            currentTotal--;
+        }
+        safety++;
+    }
+    safety = 0;
+    while (currentTotal < 20 && safety < 100) {
+        const randomDim = dimKeys[Math.floor(Math.random() * dimKeys.length)];
+        if (dimQuota[randomDim] < dimensionQuestions[randomDim].length) {
+            dimQuota[randomDim]++;
+            currentTotal++;
+        }
+        safety++;
+    }
+    
+    // 按配额抽取题目
+    dimKeys.forEach(key => {
+        const quota = dimQuota[key];
+        const pool = shuffle([...dimensionQuestions[key]]);
+        const selected = pool.slice(0, quota);
+        selectedQuestions.push(...selected);
+    });
+    
+    // 打乱顺序呈现
+    selectedQuestions = shuffle(selectedQuestions);
+    
+    // 保存到localStorage
+    localStorage.setItem('biocareer_assessment_questions', JSON.stringify(selectedQuestions));
+    
+    // 调试输出
+    console.log('分层配额抽样 - 题目分布:', {
+        research: selectedQuestions.filter(q => q.dimension === 'r').length,
+        practical: selectedQuestions.filter(q => q.dimension === 'p').length,
+        business: selectedQuestions.filter(q => q.dimension === 'b').length,
+        social: selectedQuestions.filter(q => q.dimension === 's').length,
+        technical: selectedQuestions.filter(q => q.dimension === 't').length,
+        analytical: selectedQuestions.filter(q => q.dimension === 'a').length,
+        tcm: selectedQuestions.filter(q => q.dimension === 'c').length,
+        risk: selectedQuestions.filter(q => q.dimension === 'x').length
+    });
 }
 
 function initProgressSteps(){
@@ -759,26 +620,26 @@ function showToast(msg,dur=3000){
 }
 
 function saveProgress(){
-    localStorage.setItem('biocareer_v6',JSON.stringify({currentQuestion,answers,timestamp:new Date().toISOString()}));
+    localStorage.setItem('biocareer_assessment',JSON.stringify({currentQuestion,answers,timestamp:new Date().toISOString()}));
     const ss=document.getElementById('saveStatus');
     if(ss){ss.innerHTML='<i class="fas fa-check-circle"></i><span>进度已保存</span>';ss.classList.add('saved')}
 }
 
 function loadProgress(){
-    const s=localStorage.getItem('biocareer_v6');
+    const s=localStorage.getItem('biocareer_assessment');
     if(s){const d=JSON.parse(s);if(d.answers&&d.answers.length>0){currentQuestion=d.currentQuestion||0;answers=d.answers||[];return true}}
     return false;
 }
 
 function clearProgress(){
-    localStorage.removeItem('biocareer_v6');
-    localStorage.removeItem('biocareer_v6_questions');
+    localStorage.removeItem('biocareer_assessment');
+    localStorage.removeItem('biocareer_assessment_questions');
 }
 
 function startAssessment(){
     if(loadProgress()&&currentQuestion>0){
         if(confirm('检测到上次进度：第'+(currentQuestion+1)+'题，是否继续？')){
-            selectedQuestions=JSON.parse(localStorage.getItem('biocareer_v6_questions'))||[];
+            selectedQuestions=JSON.parse(localStorage.getItem('biocareer_assessment_questions'))||[];
             if(selectedQuestions.length===0){
                 selectRandomQuestions();
             }
@@ -796,7 +657,8 @@ function startAssessment(){
 
 function getTypeLabel(q){
     if(q.axis){
-        const axisInfo = dimensions[q.axis];
+        const axisDim = resolveDim(q.axis);
+        const axisInfo = dimensions[axisDim];
         return '<span class="axis-tag">'+axisInfo.icon+' '+axisInfo.name+'</span>';
     }
     return'<span class="question-type-tag">偏好选择</span>';
@@ -809,14 +671,14 @@ function getTypeHint(q){
 
 function renderQuestion(){
     const c=document.getElementById('questionContainer'),q=selectedQuestions[currentQuestion];
-    let d,tagLabel;
-    if(q.axis){
-        d=dimensions[q.axis];
-        tagLabel='<span class="dimension-tag" style="background:linear-gradient(135deg,#fef3c7,#fde68a);color:#92400e;">'+d.icon+' '+d.name+'</span>';
-    }else{
-        d=dimensions[q.dimension];
-        tagLabel='<span class="dimension-tag">'+d.icon+' '+d.name+'</span>';
-    }
+    // 始终显示主维度（dimension）的标签，axis是配对维度用于评分
+    const mainDim = resolveDim(q.dimension);
+    d=dimensions[mainDim];
+    
+    // 判断是否是中医药或风险维度，使用特殊样式
+    const isSpecialAxis = (q.dimension === 'c' || q.dimension === 'x');
+    const tagLabel = '<span class="dimension-tag '+(isSpecialAxis?'axis-tag':'')+'">'+d.icon+' '+d.name+'</span>';
+    
     const typeLabel=getTypeLabel(q);
     const typeHint=getTypeHint(q);
     c.innerHTML='<div class="question-card active"><div class="question-header"><span class="question-number">问题 '+(currentQuestion+1)+' / '+selectedQuestions.length+'</span>'+tagLabel+typeLabel+'</div><h3 class="question-text">'+q.text+'</h3><div class="scenario-box"><p>'+q.scenario+'</p>'+typeHint+'</div><div class="options-container">'+q.options.map((o,i)=>'<button class="option-btn '+(answers[currentQuestion]===i?'selected':'')+'" onclick="selectOption('+i+')"><span class="option-number">'+(i+1)+'</span><span class="option-text">'+o.text+'</span></button>').join('')+'</div><div class="nav-buttons"><button class="btn btn-secondary" onclick="prevQuestion()" '+(currentQuestion===0?'disabled':'')+'><i class="fas fa-arrow-left"></i> 上一题</button><button class="btn btn-primary" onclick="nextQuestion()" '+(answers[currentQuestion]===undefined?'disabled':'')+'>'+(currentQuestion===selectedQuestions.length-1?'查看结果 <i class="fas fa-chart-pie"></i>':'下一题 <i class="fas fa-arrow-right"></i>')+'</button></div><div class="keyboard-hint">快捷键：<kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> <kbd>4</kbd> 选择选项，<kbd>←</kbd> 上一题，<kbd>→</kbd> 下一题</div></div>';
@@ -854,65 +716,117 @@ function nextQuestion(){
     }else{showResults()}
 }
 
+// ============================================
+// 科学严谨的评分算法
+// ============================================
+// 归一化方法：基于理论得分范围的线性映射
+// 
+// 为什么不用"期望归一化"（实际/期望）：
+//   每道题的4个选项是对称设计的 (高,高)(高,低)(低,高)(低,低)，
+//   导致每道题恰好有一个维度的4选项平均分为0。
+//   即约一半题目对某维度的期望贡献为0，除以零在数学上无意义。
+//
+// 正确方案：
+//   每题每维得分范围 [-2, +2]，N道题的理论范围 [-2N, +2N]
+//   归一化 = (实际得分 - 最小可能) / (最大可能 - 最小可能) × 100
+//   即: (actual + 2N) / (4N) × 100
+//   50分 = 中立（随机水平），100分 = 最强偏好，0分 = 最弱偏好
+// ============================================
 function calculateScores(){
-    // 重置所有8个维度
-    scores={research:0,practical:0,business:0,social:0,technical:0,analytical:0,tcm:0,risk:0};
+    const allDims = ['research','practical','business','social','technical','analytical','tcm','risk'];
+    const actualScores = {};
+    const dimQuestionCount = {};
+    allDims.forEach(d => { actualScores[d] = 0; dimQuestionCount[d] = 0; });
     
-    answers.forEach((ai,qi)=>{
-        const o=selectedQuestions[qi].options[ai];
-        Object.keys(o.score).forEach(k=>{
-            scores[k]+=o.score[k];
+    // 第一步：累加每个维度的实际得分，统计每个维度涉及多少道题
+    answers.forEach((answerIndex, questionIndex) => {
+        const question = selectedQuestions[questionIndex];
+        const selectedOption = question.options[answerIndex];
+        
+        // 该题贡献得分的两个维度
+        const dimsInThisQuestion = new Set();
+        Object.keys(selectedOption.score).forEach(dim => {
+            const resolvedDim = resolveDim(dim);
+            actualScores[resolvedDim] += selectedOption.score[dim];
+            dimsInThisQuestion.add(resolvedDim);
         });
+        
+        // 统计维度题目数（一道题可能同时给两个维度贡献分数）
+        dimsInThisQuestion.forEach(d => { dimQuestionCount[d]++; });
     });
     
-    // 主维度归一化（6个）
-    const mainKeys=['research','practical','business','social','technical','analytical'];
-    const mainScores=mainKeys.map(k=>scores[k]);
-    const minMain=Math.min(...mainScores);
-    const maxMain=Math.max(...mainScores);
+    // 第二步：基于理论得分范围归一化
+    // 每题每维得分 ∈ [-2, +2]，N道题范围 ∈ [-2N, +2N]
+    const normalizedScores = {};
+    allDims.forEach(dim => {
+        const n = dimQuestionCount[dim];
+        if (n === 0) {
+            normalizedScores[dim] = 50; // 无题目时默认中立
+        } else {
+            const minPossible = -2 * n;
+            const maxPossible = 2 * n;
+            normalizedScores[dim] = (actualScores[dim] - minPossible) / (maxPossible - minPossible) * 100;
+        }
+    });
     
-    if(maxMain!==minMain){
-        mainKeys.forEach(k=>{
-            scores[k]=Math.round(10+(scores[k]-minMain)/(maxMain-minMain)*90);
+    // 第三步：主维度映射到[10, 100]（保持相对差异，避免全部50分）
+    const mainDims = ['research','practical','business','social','technical','analytical'];
+    const mainValues = mainDims.map(d => normalizedScores[d]);
+    const minVal = Math.min(...mainValues);
+    const maxVal = Math.max(...mainValues);
+    
+    if (maxVal !== minVal) {
+        mainDims.forEach(d => {
+            scores[d] = Math.round(10 + (normalizedScores[d] - minVal) / (maxVal - minVal) * 90);
         });
-    }else{
-        mainKeys.forEach(k=>{scores[k]=50;});
+    } else {
+        mainDims.forEach(d => { scores[d] = 50; });
     }
     
-    // 独立轴归一化（tcm和risk）- 映射到[0, 100]，50为中点
-    ['tcm','risk'].forEach(k=>{
-        // 假设独立轴题目每题最大±2分，约3-4题，范围约[-8, +8]
-        scores[k]=Math.round(50+scores[k]*6); // 放大系数6，使范围更明显
-        scores[k]=Math.max(0,Math.min(100,scores[k])); // 限制在[0,100]
-    });
+    // 独立轴直接使用归一化值（已是0-100范围，无需二次映射）
+    scores.tcm = Math.round(normalizedScores.tcm);
+    scores.risk = Math.round(normalizedScores.risk);
+    
+    // 保存中间结果用于调试
+    window.debugScores = {actual: actualScores, counts: dimQuestionCount, normalized: normalizedScores};
 }
 
+// 无权重欧氏距离
 function euclideanDistance(v1,v2){
     let sum=0;
     for(let i=0;i<v1.length;i++){
-        const w=dimWeights[dimKeys[i]];
-        sum+=w*w*Math.pow(v1[i]-v2[i],2);
+        // 移除权重，使用简单欧氏距离
+        sum+=Math.pow(v1[i]-v2[i],2);
     }
     return Math.sqrt(sum);
 }
 
+// ============================================
+// 重构职业匹配算法（无权重）
+// ============================================
 function matchCareers(){
-    const userVector=dimKeys.map(k=>scores[k]/100);
-    return careers.map(c=>{
-        const dist=euclideanDistance(userVector,c.vector);
-        let match=Math.round(100*(1-dist/maxPossibleDist));
-        
-        // 考虑独立轴的影响
-        if(c.tcm!==undefined){
-            const tcmDiff=Math.abs(scores.tcm/100-c.tcm);
-            match=Math.round(match*(1-tcmDiff*0.15)); // tcm差异最多影响15%
+    // 使用归一化后的用户向量（0-1范围）
+    const userVector=['research','practical','business','social','technical','analytical']
+        .map(k=>scores[k]/100);
+    
+    return careers.map(career=>{
+        // 简单欧氏距离（无权重）
+        let sumSq=0;
+        for(let i=0;i<userVector.length;i++){
+            sumSq+=Math.pow(userVector[i]-career.vector[i],2);
         }
-        if(c.risk!==undefined){
-            const riskDiff=Math.abs(scores.risk/100-c.risk);
-            match=Math.round(match*(1-riskDiff*0.15)); // risk差异最多影响15%
-        }
+        const dist=Math.sqrt(sumSq);
+        const maxDist=Math.sqrt(6); // sqrt(6个维度)
+        let match=Math.round(100*(1-dist/maxDist));
         
-        return{...c,dist,match};
+        // 独立轴惩罚（保持不变）
+        const tcmDiff=Math.abs(scores.tcm/100-career.tcm);
+        match=Math.round(match*(1-tcmDiff*0.15));
+        
+        const riskDiff=Math.abs(scores.risk/100-career.risk);
+        match=Math.round(match*(1-riskDiff*0.15));
+        
+        return{...career,match};
     }).sort((a,b)=>b.match-a.match);
 }
 
@@ -961,6 +875,88 @@ function renderAxisBars(){
     riskScore.textContent=riskLabel+' ('+scores.risk+'分)';
 }
 
+// 渲染题目分布统计
+function renderQuestionDistribution(){
+    // 新题库使用小写单字母: r=research, p=practical, b=business, s=social, t=technical, a=analytical, c=tcm, x=risk
+    const distribution = {
+        research: selectedQuestions.filter(q => q.dimension === 'r').length,
+        practical: selectedQuestions.filter(q => q.dimension === 'p').length,
+        business: selectedQuestions.filter(q => q.dimension === 'b').length,
+        social: selectedQuestions.filter(q => q.dimension === 's').length,
+        technical: selectedQuestions.filter(q => q.dimension === 't').length,
+        analytical: selectedQuestions.filter(q => q.dimension === 'a').length,
+        tcm: selectedQuestions.filter(q => q.dimension === 'c').length,
+        risk: selectedQuestions.filter(q => q.dimension === 'x').length
+    };
+    
+    const container = document.getElementById('questionDistribution');
+    const items = [
+        {key:'research',label:'研究探索',icon:'🔬',count:distribution.research},
+        {key:'practical',label:'应用实践',icon:'⚙️',count:distribution.practical},
+        {key:'business',label:'商业运营',icon:'💼',count:distribution.business},
+        {key:'social',label:'人际互动',icon:'🤝',count:distribution.social},
+        {key:'technical',label:'技术工程',icon:'🔧',count:distribution.technical},
+        {key:'analytical',label:'数据分析',icon:'📊',count:distribution.analytical},
+        {key:'tcm',label:'中医药',icon:'🌿',count:distribution.tcm,isAxis:true},
+        {key:'risk',label:'风险偏好',icon:'⚡',count:distribution.risk,isAxis:true}
+    ];
+    
+    container.innerHTML = items.map(item => 
+        '<div class="distribution-item '+(item.isAxis?'axis':'')+'">'+
+        '<div class="distribution-icon">'+item.icon+'</div>'+
+        '<div class="distribution-label">'+item.label+'</div>'+
+        '<div class="distribution-value">'+item.count+'题</div>'+
+        '</div>'
+    ).join('');
+}
+
+// ============================================
+// 渲染调试信息
+// ============================================
+function renderDebugInfo(){
+    if(!window.debugScores)return;
+    
+    const {actual, counts, normalized} = window.debugScores;
+    const container = document.getElementById('debugGrid');
+    
+    const dims = [
+        {key:'research',label:'研究探索'},
+        {key:'practical',label:'应用实践'},
+        {key:'business',label:'商业运营'},
+        {key:'social',label:'人际互动'},
+        {key:'technical',label:'技术工程'},
+        {key:'analytical',label:'数据分析'},
+        {key:'tcm',label:'中医药偏好'},
+        {key:'risk',label:'风险偏好'}
+    ];
+    
+    // 实际得分卡片
+    let actualHtml = '<div class="debug-card"><h4><i class="fas fa-calculator"></i> 实际得分</h4>';
+    dims.forEach(d => {
+        actualHtml += '<div class="debug-item"><span class="debug-label">'+d.label+'</span><span class="debug-value">'+(actual[d.key]||0).toFixed(2)+'</span></div>';
+    });
+    actualHtml += '</div>';
+    
+    // 维度题目数卡片
+    let countsHtml = '<div class="debug-card"><h4><i class="fas fa-list-ol"></i> 涉及题数</h4>';
+    dims.forEach(d => {
+        const n = counts[d.key] || 0;
+        const range = n > 0 ? '[' + (-2*n) + ', +' + (2*n) + ']' : '-';
+        countsHtml += '<div class="debug-item"><span class="debug-label">'+d.label+'</span><span class="debug-value">'+n+'题 '+range+'</span></div>';
+    });
+    countsHtml += '</div>';
+    
+    // 归一化得分卡片
+    let normalizedHtml = '<div class="debug-card"><h4><i class="fas fa-percentage"></i> 归一化得分</h4>';
+    dims.forEach(d => {
+        const val = normalized[d.key] || 0;
+        normalizedHtml += '<div class="debug-item"><span class="debug-label">'+d.label+'</span><span class="debug-value">'+val.toFixed(1)+'%</span></div>';
+    });
+    normalizedHtml += '</div>';
+    
+    container.innerHTML = actualHtml + countsHtml + normalizedHtml;
+}
+
 function renderResults(matched){
     const sorted=Object.entries(scores).filter(([k])=>!['tcm','risk'].includes(k)).sort((a,b)=>b[1]-a[1]);
     const top=sorted[0][0],sec=sorted[1][0];
@@ -979,6 +975,12 @@ function renderResults(matched){
     // 渲染独立轴
     renderAxisBars();
 
+    // 渲染题目分布统计
+    renderQuestionDistribution();
+    
+    // 渲染调试信息
+    renderDebugInfo();
+
     document.getElementById('careerCards').innerHTML=matched.slice(0,3).map((c,i)=>
         '<div class="career-card '+(i===0?'best-match':'')+'"><div class="career-header"><div class="career-rank">'+(i+1)+'</div><span class="career-match-badge '+(c.match>=85?'high':'medium')+'"><i class="fas fa-star"></i> 匹配度 '+c.match+'%</span></div><h4 class="career-name">'+c.name+'</h4><div class="career-tags">'+c.tags.map(t=>'<span class="career-tag">'+t+'</span>').join('')+'</div><p class="career-description">'+c.description+'</p><div class="career-details"><div class="career-detail"><span class="career-detail-value">'+c.salary+'</span><span class="career-detail-label">参考年薪</span></div><div class="career-detail"><span class="career-detail-value">'+c.growth+'</span><span class="career-detail-label">发展节奏</span></div><div class="career-detail"><span class="career-detail-value">'+c.tags[0]+'</span><span class="career-detail-label">入行门槛</span></div></div></div>'
     ).join('');
@@ -993,36 +995,49 @@ function restartAssessment(){
     // 关键：重新选择题目
     selectRandomQuestions();
     
+    // 隐藏结果页
     document.getElementById('resultsScreen').classList.remove('active');
-    document.getElementById('welcomeScreen').style.display='block';
+    // 隐藏题目区域，回到欢迎页
+    document.getElementById('questionContainer').style.display='none';
     document.getElementById('progressContainer').style.display='none';
-    document.getElementById('questionContainer').style.display='block';
+    // 显示欢迎页
+    document.getElementById('welcomeScreen').style.display='block';
+    
     const ss=document.getElementById('saveStatus');
     if(ss){ss.innerHTML='<i class="fas fa-info-circle"></i><span>测评进度将自动保存</span>';ss.classList.remove('saved')}
     window.scrollTo({top:0,behavior:'smooth'});
 }
 
 function saveResult(){
-    const code=document.getElementById('resultType').textContent,name=document.getElementById('resultTitle').textContent;
-    let r='生物医药职业决策测评报告 V6\n================================\n\n测评结果: '+code+' - '+name+'\n\n六维能力得分:\n';
-    Object.entries(scores).filter(([k])=>!['tcm','risk'].includes(k)).sort((a,b)=>b[1]-a[1]).forEach(([k,s])=>{r+='- '+dimensions[k].name+': '+s+'分\n'});
-    r+='\n偏好倾向:\n';
-    const tcmLabel=scores.tcm>=60?'偏向中医药领域':scores.tcm<=40?'偏向现代生物医药':'中立';
-    const riskLabel=scores.risk>=60?'偏好高风险高回报':scores.risk<=40?'偏好稳定可预期':'中立';
-    r+='- 中医药偏好: '+tcmLabel+' ('+scores.tcm+'分)\n';
-    r+='- 风险偏好: '+riskLabel+' ('+scores.risk+'分)\n';
-    const blob=new Blob([r],{type:'text/plain;charset=utf-8'});
-    const a=document.createElement('a');a.href=URL.createObjectURL(blob);
-    a.download='生物医药职业测评V6_'+code+'_'+new Date().toLocaleDateString()+'.txt';
-    document.body.appendChild(a);a.click();document.body.removeChild(a);
-    showToast('报告已下载！');
+    showToast('正在生成报告图片...');
+    const resultSection = document.getElementById('resultsScreen');
+    const code=document.getElementById('resultType').textContent;
+    
+    domtoimage.toPng(resultSection, {
+        quality: 1,
+        width: resultSection.scrollWidth,
+        height: resultSection.scrollHeight,
+        style: {
+            transform: 'none'
+        }
+    }).then(dataUrl => {
+        const link = document.createElement('a');
+        link.download = '生物医药职业测评_' + code + '_' + new Date().toLocaleDateString('zh-CN').replace(/\//g, '-') + '.png';
+        link.href = dataUrl;
+        link.click();
+        showToast('报告图片已下载！');
+    }).catch(err => {
+        console.error('生成图片失败:', err);
+        showToast('生成图片失败，请重试');
+    });
 }
 
 function shareResult(){
-    const code=document.getElementById('resultType').textContent,name=document.getElementById('resultTitle').textContent;
-    const txt='我在生物医药职业决策测评V6中的结果是：'+code+' - '+name+'。快来测测你的职业DNA吧！';
-    if(navigator.share){navigator.share({title:'生物医药职业决策测评V6',text:txt,url:location.href}).then(()=>showToast('分享成功！')).catch(()=>{})}
-    else{navigator.clipboard.writeText(txt+' '+location.href).then(()=>showToast('结果已复制！')).catch(()=>showToast('复制失败'))}
+    const shareUrl = 'https://sonar0v0.github.io/biocareer-assv2/';
+    const code=document.getElementById('resultType').textContent;
+    const txt='我在生物医药职业决策测评中的结果是：'+code+'。快来测测你的职业DNA吧！';
+    if(navigator.share){navigator.share({title:'生物医药职业决策测评',text:txt,url:shareUrl}).then(()=>showToast('分享成功！')).catch(()=>{})}
+    else{navigator.clipboard.writeText(txt+'\n'+shareUrl).then(()=>showToast('链接已复制到剪贴板！')).catch(()=>showToast('复制失败，请手动复制'))}
 }
 
 document.addEventListener('keydown',e=>{
